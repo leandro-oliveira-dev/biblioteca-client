@@ -1,5 +1,10 @@
-import { SetStateAction, useRef, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import {Menu} from "@/components/Menu";
+
+interface IBooks {
+  name: string
+  author: string
+}
 
 import {
   Button,
@@ -26,6 +31,7 @@ export default function Books() {
   const [qtd, setQtd] = useState("");
   const [position, setPosition] = useState("");
   const [status, setStatus] = useState("");
+  const [author, setAuthor] = useState("");
 
   const initialRef = useRef(null);
 
@@ -35,19 +41,33 @@ export default function Books() {
     const data = {
       name,
       code,
+      author,
       qtd,
       position,
+      status:"disponivel"
     };
 
     fetch("http://localhost:8000/books/create", {
       method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
       body: JSON.stringify(data),
     })
       .then((response) => console.log({ response }))
       .catch((error) => alert("falhou"));
-
-    console.log("salvar book");
   }
+
+
+  const [books, setBooks] = useState<IBooks[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:8000/books/list")
+      .then((response) => response.json())
+      .then((value) => setBooks(value));
+  }, []);
+ 
 
   return (
     <>
@@ -66,22 +86,19 @@ export default function Books() {
           <table className="min-w-full bg-zinc-600 border border-gray-300">
             <thead>
               <tr>
-                <th className="py-2 px-4 border-b">ID</th>
-                <th className="py-2 px-4 border-b">Name</th>
-                <th className="py-2 px-4 border-b">Email</th>
+                <th className="py-2 px-4 border-b">Titulo</th>
+                <th className="py-2 px-4 border-b">Autor</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td className="py-2 px-4 border-b">1</td>
-                <td className="py-2 px-4 border-b">John Doe</td>
-                <td className="py-2 px-4 border-b">john@example.com</td>
-              </tr>
-              <tr>
-                <td className="py-2 px-4 border-b">2</td>
-                <td className="py-2 px-4 border-b">Jane Smith</td>
-                <td className="py-2 px-4 border-b">jane@example.com</td>
-              </tr>
+              {
+                books.map(book => (
+                  <tr key={book.name}>
+                    <td className="py-2 px-4 border-b">{book.name}</td>
+                    <td className="py-2 px-4 border-b">{book.author}</td>
+                  </tr>
+                ))
+              }
             </tbody>
           </table>
         </div>
@@ -110,6 +127,17 @@ export default function Books() {
                 placeholder="Titulo"
               />
             </FormControl>
+
+
+            <FormControl>
+              <FormLabel>Autor</FormLabel>
+              <Input
+                onChange={(event: { target: { value: SetStateAction<string>; }; }) => setAuthor(event.target.value)}
+                value={author}
+                placeholder="Autor"
+              />
+            </FormControl>
+
             <FormControl mt={4}>
               <FormLabel>Quantidade</FormLabel>
               <Input
