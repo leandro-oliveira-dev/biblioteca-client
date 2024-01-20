@@ -1,9 +1,9 @@
 import { SetStateAction, useEffect, useRef, useState } from "react";
-import {Menu} from "@/components/Menu";
+import { Menu } from "@/components/Menu";
 
 interface IBooks {
-  name: string
-  author: string
+  name: string;
+  author: string;
 }
 
 import {
@@ -26,53 +26,87 @@ import { Header } from "@/components/Header";
 
 export default function Books() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [qtd, setQtd] = useState("");
   const [position, setPosition] = useState("");
-  const [status, setStatus] = useState("");
   const [author, setAuthor] = useState("");
+  const [status, setStatus] = useState("");
+
+  const [books, setBooks] = useState<IBooks[]>([]);
+
+  const toast = useToast();
 
   const initialRef = useRef(null);
 
-  function handleSaveBook() {
-    console.log({ name });
+  function clearInputs() {
+    setAuthor("");
+    setName("");
+    setCode("");
+    setQtd("");
+    setPosition("");
+  }
 
+  function handleSaveBook() {
     const data = {
       name,
       code,
       author,
       qtd,
       position,
-      status:"disponivel"
+      status: "disponivel",
     };
 
     fetch("http://localhost:8000/books/create", {
       method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
     })
-      .then((response) => console.log({ response }))
-      .catch((error) => alert("falhou"));
+      .then((response) => response.json())
+      .then((data) => {
+        onClose();
+
+        clearInputs();
+
+        const newBooks = [...books, data.book];
+
+        setBooks(newBooks);
+
+        toast({
+          title: "Cadastro concluido",
+          description: data.message,
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+      })
+      .catch((error) => {
+        console.log({ error });
+
+        toast({
+          title: "Falha no cadastro",
+          description: error,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      });
   }
-
-
-  const [books, setBooks] = useState<IBooks[]>([]);
 
   useEffect(() => {
     fetch("http://localhost:8000/books/list")
       .then((response) => response.json())
       .then((value) => setBooks(value));
   }, []);
- 
 
   return (
     <>
-    <Header title="Livros"></Header>
-     <Menu/>
+      <Header title="Livros"></Header>
+      <Menu />
       <section className="flex items-center justify-center flex-col">
         <div className="flex flex-row justify-between m-6 gap-6">
           <Heading size={"lg"}>Cadastro de livros</Heading>
@@ -91,14 +125,12 @@ export default function Books() {
               </tr>
             </thead>
             <tbody>
-              {
-                books.map(book => (
-                  <tr key={book.name}>
-                    <td className="py-2 px-4 border-b">{book.name}</td>
-                    <td className="py-2 px-4 border-b">{book.author}</td>
-                  </tr>
-                ))
-              }
+              {books.map((book) => (
+                <tr key={book.name}>
+                  <td className="py-2 px-4 border-b">{book.name}</td>
+                  <td className="py-2 px-4 border-b">{book.author}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -113,7 +145,9 @@ export default function Books() {
             <FormControl>
               <FormLabel>Codigo</FormLabel>
               <Input
-                onChange={(event: { target: { value: SetStateAction<string>; }; }) => setCode(event.target.value)}
+                onChange={(event: {
+                  target: { value: SetStateAction<string> };
+                }) => setCode(event.target.value)}
                 value={code}
                 ref={initialRef}
                 placeholder="Codigo"
@@ -122,17 +156,20 @@ export default function Books() {
             <FormControl>
               <FormLabel>Titulo</FormLabel>
               <Input
-                onChange={(event: { target: { value: SetStateAction<string>; }; }) => setName(event.target.value)}
+                onChange={(event: {
+                  target: { value: SetStateAction<string> };
+                }) => setName(event.target.value)}
                 value={name}
                 placeholder="Titulo"
               />
             </FormControl>
 
-
             <FormControl>
               <FormLabel>Autor</FormLabel>
               <Input
-                onChange={(event: { target: { value: SetStateAction<string>; }; }) => setAuthor(event.target.value)}
+                onChange={(event: {
+                  target: { value: SetStateAction<string> };
+                }) => setAuthor(event.target.value)}
                 value={author}
                 placeholder="Autor"
               />
@@ -141,7 +178,9 @@ export default function Books() {
             <FormControl mt={4}>
               <FormLabel>Quantidade</FormLabel>
               <Input
-                onChange={(event: { target: { value: SetStateAction<string>; }; }) => setQtd(event.target.value)}
+                onChange={(event: {
+                  target: { value: SetStateAction<string> };
+                }) => setQtd(event.target.value)}
                 value={qtd}
                 type="number"
                 placeholder="Quantidade"
@@ -150,7 +189,9 @@ export default function Books() {
             <FormControl mt={4}>
               <FormLabel>Posicão</FormLabel>
               <Input
-                onChange={(event: { target: { value: SetStateAction<string>; }; }) => setPosition(event.target.value)}
+                onChange={(event: {
+                  target: { value: SetStateAction<string> };
+                }) => setPosition(event.target.value)}
                 value={position}
                 type="text"
                 placeholder="Posicao"
