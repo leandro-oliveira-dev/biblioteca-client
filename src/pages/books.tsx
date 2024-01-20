@@ -2,6 +2,7 @@ import { SetStateAction, useEffect, useRef, useState } from "react";
 import { Menu } from "@/components/Menu";
 
 interface IBooks {
+  id: string;
   name: string;
   author: string;
 }
@@ -21,8 +22,11 @@ import {
   ModalOverlay,
   Select,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { Header } from "@/components/Header";
+
+const DEFAULT_STATUS = "disponivel";
 
 export default function Books() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -32,7 +36,7 @@ export default function Books() {
   const [qtd, setQtd] = useState("");
   const [position, setPosition] = useState("");
   const [author, setAuthor] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState(DEFAULT_STATUS);
 
   const [books, setBooks] = useState<IBooks[]>([]);
 
@@ -46,6 +50,7 @@ export default function Books() {
     setCode("");
     setQtd("");
     setPosition("");
+    setStatus(DEFAULT_STATUS);
   }
 
   function handleSaveBook() {
@@ -55,7 +60,7 @@ export default function Books() {
       author,
       qtd,
       position,
-      status: "disponivel",
+      status,
     };
 
     fetch("http://localhost:8000/books/create", {
@@ -104,20 +109,18 @@ export default function Books() {
   }, []);
 
   return (
-    <>
-      <Header title="Livros"></Header>
+    <main>
+      <Header title="Cadastro de livros"></Header>
       <Menu />
       <section className="flex items-center justify-center flex-col">
         <div className="flex flex-row justify-between m-6 gap-6">
-          <Heading size={"lg"}>Cadastro de livros</Heading>
-
           <Button onClick={onOpen} colorScheme="green">
             Cadastrar
           </Button>
         </div>
 
         <div className="max-w-screen-md mx-auto">
-          <table className="min-w-full bg-zinc-600 border border-gray-300">
+          <table className="min-w-full  border border-gray-300">
             <thead>
               <tr>
                 <th className="py-2 px-4 border-b">Titulo</th>
@@ -126,7 +129,7 @@ export default function Books() {
             </thead>
             <tbody>
               {books.map((book) => (
-                <tr key={book.name}>
+                <tr key={book.id}>
                   <td className="py-2 px-4 border-b">{book.name}</td>
                   <td className="py-2 px-4 border-b">{book.author}</td>
                 </tr>
@@ -138,7 +141,7 @@ export default function Books() {
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent color="white" bg="gray.800">
           <ModalHeader>Cadastre um livro</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
@@ -200,23 +203,38 @@ export default function Books() {
 
             <FormControl mt={4}>
               <FormLabel>Status</FormLabel>
-              <Select placeholder="Escolher">
-                <option value="avariado">AVARIADO</option>
-                <option value="disponivel">DISPONIVEL</option>
-                <option value="indisponivel">INDISPONIVEL</option>
-                <option value="emprestado">EMPRESTADO</option>
+              <Select
+                color={"grey"}
+                placeholder="Escolher"
+                value={status}
+                onChange={(event: {
+                  target: { value: SetStateAction<string> };
+                }) => setStatus(event.target.value)}
+              >
+                <option className="text-black" value="avariado">
+                  AVARIADO
+                </option>
+                <option className="text-black" value="disponivel">
+                  DISPONIVEL
+                </option>
+                <option className="text-black" value="indisponivel">
+                  INDISPONIVEL
+                </option>
+                <option className="text-black" value="emprestado">
+                  EMPRESTADO
+                </option>
               </Select>
             </FormControl>
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={handleSaveBook} colorScheme="blue" mr={3}>
+            <Button onClick={handleSaveBook} colorScheme="black" mr={3}>
               Salvar
             </Button>
             <Button onClick={onClose}>Cancel</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </>
+    </main>
   );
 }
