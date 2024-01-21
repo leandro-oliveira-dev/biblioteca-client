@@ -5,6 +5,10 @@ interface IBooks {
   id: string;
   name: string;
   author: string;
+  qtd: number;
+  position: string;
+  status: string;
+  code: number;
 }
 
 import {
@@ -115,7 +119,7 @@ export default function Books() {
       <section className="flex items-center justify-center flex-col">
         <div className="flex flex-row justify-between m-6 gap-6">
           <Button onClick={onOpen} colorScheme="green">
-            Cadastrar
+            Cadastrar Livros
           </Button>
         </div>
 
@@ -123,8 +127,12 @@ export default function Books() {
           <table className="min-w-full  border border-gray-300">
             <thead>
               <tr>
+                <th className="py-2 px-4 border-b">Codigo</th>
                 <th className="py-2 px-4 border-b">Titulo</th>
                 <th className="py-2 px-4 border-b">Autor</th>
+                <th className="py-2 px-4 border-b">Quantidade</th>
+                <th className="py-2 px-4 border-b">Posição</th>
+                <th className="py-2 px-4 border-b">Status</th>
               </tr>
             </thead>
             <tbody>
@@ -132,6 +140,10 @@ export default function Books() {
                 <tr key={book.id}>
                   <td className="py-2 px-4 border-b">{book.name}</td>
                   <td className="py-2 px-4 border-b">{book.author}</td>
+                  <td className="py-2 px-4 border-b">{book.code}</td>
+                  <td className="py-2 px-4 border-b">{book.qtd}</td>
+                  <td className="py-2 px-4 border-b">{book.position}</td>
+                  <td className="py-2 px-4 border-b">{book.status}</td>
                 </tr>
               ))}
             </tbody>
