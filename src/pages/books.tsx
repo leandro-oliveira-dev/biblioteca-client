@@ -15,7 +15,6 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Heading,
   Input,
   Modal,
   ModalBody,
@@ -136,7 +135,7 @@ export default function Books() {
               </tr>
             </thead>
             <tbody>
-              {books.map((book) => (
+              {books?.map((book) => (
                 <tr key={book.id}>
                   <td className="py-2 px-4 border-b">{book.name}</td>
                   <td className="py-2 px-4 border-b">{book.author}</td>

@@ -17,7 +17,7 @@ const MENUS: IMenu[] = [
     url: "/online",
     title: "Online",
   },
-  { url: "/sair", title: "Sair" },
+  { url: "/login", title: "Sair" },
 ];
 
 export function Menu() {
