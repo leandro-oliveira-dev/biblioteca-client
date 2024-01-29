@@ -23,8 +23,8 @@ import { Header } from "@/components/Header";
 export default function Online() {
   return (
     <main>
-      <Header title="Livros Online"></Header>
       <Menu></Menu>
+      <Header title="Livros Online"></Header>
       <div>Verifique livros online disponiveis</div>
     </main>
   );

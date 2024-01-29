@@ -1,13 +1,15 @@
 import { SetStateAction, useEffect, useRef, useState } from "react";
 import { Menu } from "@/components/Menu";
 
+type Status = "avariado" | "disponivel" | "indisponivel" | "emprestado";
+
 interface IBooks {
   id: string;
   name: string;
   author: string;
   qtd: number;
   position: string;
-  status: string;
+  status: Status;
   code: number;
 }
 
@@ -15,6 +17,10 @@ import {
   Button,
   FormControl,
   FormLabel,
+  Thead,
+  Tr,
+  Td,
+  Th,
   Input,
   Modal,
   ModalBody,
@@ -26,10 +32,25 @@ import {
   Select,
   useDisclosure,
   useToast,
+  VStack,
+  TableContainer,
+  Table,
+  Tbody,
+  Box,
+  HStack,
+  Flex,
+  Badge,
 } from "@chakra-ui/react";
 import { Header } from "@/components/Header";
 
 const DEFAULT_STATUS = "disponivel";
+
+const BADGE_STATUS = {
+  avariado: "orange",
+  disponivel: "green",
+  indisponivel: "red",
+  emprestado: "yellow",
+};
 
 export default function Books() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -112,47 +133,79 @@ export default function Books() {
   }, []);
 
   return (
-    <main>
-      <Header title="Cadastro de livros"></Header>
+    <Box as={"main"}>
       <Menu />
-      <section className="flex items-center justify-center flex-col">
-        <div className="flex flex-row justify-between m-6 gap-6">
-          <Button onClick={onOpen} colorScheme="green">
-            Cadastrar Livros
-          </Button>
-        </div>
+      <VStack color={"#fff"}>
+        <Header title="Cadastro de livros"></Header>
 
-        <div className="max-w-screen-md mx-auto">
-          <table className="min-w-full  border border-gray-300">
-            <thead>
-              <tr>
-                <th className="py-2 px-4 border-b">Codigo</th>
-                <th className="py-2 px-4 border-b">Titulo</th>
-                <th className="py-2 px-4 border-b">Autor</th>
-                <th className="py-2 px-4 border-b">Quantidade</th>
-                <th className="py-2 px-4 border-b">Posição</th>
-                <th className="py-2 px-4 border-b">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {books?.map((book) => (
-                <tr key={book.id}>
-                  <td className="py-2 px-4 border-b">{book.name}</td>
-                  <td className="py-2 px-4 border-b">{book.author}</td>
-                  <td className="py-2 px-4 border-b">{book.code}</td>
-                  <td className="py-2 px-4 border-b">{book.qtd}</td>
-                  <td className="py-2 px-4 border-b">{book.position}</td>
-                  <td className="py-2 px-4 border-b">{book.status}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+        <VStack>
+          <HStack
+            justifyContent={"space-between"}
+            alignSelf={"flex-start"}
+            mt={8}
+            width={"100%"}
+          >
+            <HStack>
+              <Button size={"xs"} colorScheme={BADGE_STATUS["disponivel"]}>
+                Disponivel
+              </Button>
+              <Button size={"xs"} colorScheme={BADGE_STATUS["avariado"]}>
+                Avariado
+              </Button>
+              <Button size={"xs"} colorScheme={BADGE_STATUS["indisponivel"]}>
+                Indisponivel
+              </Button>
+            </HStack>
+            <Flex>
+              <Button onClick={onOpen} colorScheme="gray">
+                Cadastrar
+              </Button>
+            </Flex>
+          </HStack>
+
+          <TableContainer>
+            <Table backgroundColor={"#222"} borderRadius={4} variant="simple">
+              <Thead>
+                <Tr>
+                  <Th color={"#fff"}>Codigo</Th>
+                  <Th color={"#fff"}>Titulo</Th>
+                  <Th color={"#fff"}>Autor</Th>
+                  <Th color={"#fff"}>Quantidade</Th>
+                  <Th color={"#fff"}>Posição</Th>
+                  <Th color={"#fff"}>Status</Th>
+                  <Th color={"#fff"}></Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {books?.map((book) => (
+                  <Tr key={book.id}>
+                    <Td>{book.name}</Td>
+                    <Td>{book.author}</Td>
+                    <Td>{book.code}</Td>
+                    <Td>{book.qtd}</Td>
+                    <Td>{book.position}</Td>
+                    <Td>
+                      <Badge colorScheme={BADGE_STATUS[book.status]}>
+                        {book.status}
+                      </Badge>
+                    </Td>
+                    <Td>
+                      <HStack>
+                        <Button colorScheme="green">Editar</Button>
+                        <Button colorScheme="red">Indisponivel</Button>
+                      </HStack>
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          </TableContainer>
+        </VStack>
+      </VStack>
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent color="white" bg="gray.800">
+        <ModalContent color="white" bg="#333">
           <ModalHeader>Cadastre um livro</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
@@ -167,7 +220,7 @@ export default function Books() {
                 placeholder="Codigo"
               />
             </FormControl>
-            <FormControl>
+            <FormControl mt={4}>
               <FormLabel>Titulo</FormLabel>
               <Input
                 onChange={(event: {
@@ -178,7 +231,7 @@ export default function Books() {
               />
             </FormControl>
 
-            <FormControl>
+            <FormControl mt={4}>
               <FormLabel>Autor</FormLabel>
               <Input
                 onChange={(event: {
@@ -246,6 +299,6 @@ export default function Books() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    </main>
+    </Box>
   );
 }

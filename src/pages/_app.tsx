@@ -7,7 +7,7 @@ import type { AppProps } from "next/app";
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider>
-      <Box bgColor={"#020817"} height={"100vh"}>
+      <Box padding={4} color={"#fff"} bgColor={"#333"} height={"100vh"}>
         <Component {...pageProps} />
       </Box>
     </ChakraProvider>
