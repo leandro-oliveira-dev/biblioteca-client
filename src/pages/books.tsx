@@ -62,6 +62,9 @@ export default function Books() {
   const [author, setAuthor] = useState("");
   const [status, setStatus] = useState(DEFAULT_STATUS);
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingBook, setEditingBook] = useState<IBooks | null>(null);
+
   const [books, setBooks] = useState<IBooks[]>([]);
 
   const toast = useToast();
@@ -86,6 +89,62 @@ export default function Books() {
       position,
       status,
     };
+
+    function startEditing(book: IBooks) {
+      setIsEditing(true);
+      setEditingBook(book);
+      onOpen();
+    }
+    const url = isEditing
+      ? `http://localhost:8000/books/update/${editingBook?.id}`
+      : "http://localhost:8000/books/create";
+
+    const method = isEditing ? "PUT" : "POST";
+
+    fetch(url, {
+      method,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        onClose();
+        setIsEditing(false);
+        setEditingBook(null);
+        clearInputs();
+        if (isEditing) {
+          // Atualizar a lista de livros com o livro editado
+          const updatedBooks = books.map((b) =>
+            b.id === editingBook?.id ? data.book : b
+          );
+          setBooks(updatedBooks);
+        } else {
+          // Adicionar novo livro à lista
+          setBooks([...books, data.book]);
+        }
+
+        toast({
+          title: "Cadastro concluído",
+          description: data.message,
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+      })
+      .catch((error) => {
+        console.log({ error });
+
+        toast({
+          title: "Falha no cadastro",
+          description: error,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      });
 
     fetch("http://localhost:8000/books/create", {
       method: "POST",
@@ -125,7 +184,6 @@ export default function Books() {
         });
       });
   }
-
   useEffect(() => {
     fetch("http://localhost:8000/books/list")
       .then((response) => response.json())
@@ -191,7 +249,9 @@ export default function Books() {
                     </Td>
                     <Td>
                       <HStack>
-                        <Button colorScheme="green">Editar</Button>
+                        <Button onClick={onOpen} colorScheme="green">
+                          Editar
+                        </Button>
                         <Button colorScheme="red">Indisponivel</Button>
                       </HStack>
                     </Td>
@@ -203,10 +263,20 @@ export default function Books() {
         </VStack>
       </VStack>
 
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <Modal
+        isOpen={isOpen}
+        onClose={() => {
+          onClose;
+          setIsEditing(false);
+          setEditingBook(null);
+          clearInputs();
+        }}
+      >
         <ModalOverlay />
         <ModalContent color="white" bg="#333">
-          <ModalHeader>Cadastre um livro</ModalHeader>
+          <ModalHeader>
+            {isEditing ? "Editar Livro" : "Cadastrar um livro"}
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <FormControl>
@@ -215,7 +285,7 @@ export default function Books() {
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setCode(event.target.value)}
-                value={code}
+                value={isEditing ? editingBook?.code || "" : code}
                 ref={initialRef}
                 placeholder="Codigo"
               />
@@ -226,7 +296,7 @@ export default function Books() {
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setName(event.target.value)}
-                value={name}
+                value={isEditing ? editingBook?.code || "" : name}
                 placeholder="Titulo"
               />
             </FormControl>
@@ -237,7 +307,7 @@ export default function Books() {
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setAuthor(event.target.value)}
-                value={author}
+                value={isEditing ? editingBook?.code || "" : author}
                 placeholder="Autor"
               />
             </FormControl>
@@ -248,7 +318,7 @@ export default function Books() {
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setQtd(event.target.value)}
-                value={qtd}
+                value={isEditing ? editingBook?.code || "" : qtd}
                 type="number"
                 placeholder="Quantidade"
               />
@@ -259,7 +329,7 @@ export default function Books() {
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setPosition(event.target.value)}
-                value={position}
+                value={isEditing ? editingBook?.code || "" : position}
                 type="text"
                 placeholder="Posicao"
               />
@@ -270,7 +340,7 @@ export default function Books() {
               <Select
                 color={"grey"}
                 placeholder="Escolher"
-                value={status}
+                value={isEditing ? editingBook?.code || "" : status}
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setStatus(event.target.value)}
