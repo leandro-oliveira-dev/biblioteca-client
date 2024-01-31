@@ -71,15 +71,6 @@ export default function Books() {
 
   const initialRef = useRef(null);
 
-  function clearInputs() {
-    setAuthor("");
-    setName("");
-    setCode("");
-    setQtd("");
-    setPosition("");
-    setStatus(DEFAULT_STATUS);
-  }
-
   function handleSaveBook() {
     const data = {
       name,
@@ -89,62 +80,6 @@ export default function Books() {
       position,
       status,
     };
-
-    function startEditing(book: IBooks) {
-      setIsEditing(true);
-      setEditingBook(book);
-      onOpen();
-    }
-    const url = isEditing
-      ? `http://localhost:8000/books/update/${editingBook?.id}`
-      : "http://localhost:8000/books/create";
-
-    const method = isEditing ? "PUT" : "POST";
-
-    fetch(url, {
-      method,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        onClose();
-        setIsEditing(false);
-        setEditingBook(null);
-        clearInputs();
-        if (isEditing) {
-          // Atualizar a lista de livros com o livro editado
-          const updatedBooks = books.map((b) =>
-            b.id === editingBook?.id ? data.book : b
-          );
-          setBooks(updatedBooks);
-        } else {
-          // Adicionar novo livro à lista
-          setBooks([...books, data.book]);
-        }
-
-        toast({
-          title: "Cadastro concluído",
-          description: data.message,
-          status: "success",
-          duration: 9000,
-          isClosable: true,
-        });
-      })
-      .catch((error) => {
-        console.log({ error });
-
-        toast({
-          title: "Falha no cadastro",
-          description: error,
-          status: "error",
-          duration: 9000,
-          isClosable: true,
-        });
-      });
 
     fetch("http://localhost:8000/books/create", {
       method: "POST",
@@ -183,12 +118,78 @@ export default function Books() {
           isClosable: true,
         });
       });
+
+    const url = isEditing
+      ? `http://localhost:8000/books/update/${editingBook?.id}`
+      : "http://localhost:8000/books/create";
+
+    const method = isEditing ? "PUT" : "POST";
+
+    fetch(url, {
+      method,
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((responsedata) => {
+        onClose();
+        setIsEditing(false);
+        setEditingBook(null);
+        clearInputs();
+        if (isEditing) {
+          // Atualizar a lista de livros com o livro editado
+          const updatedBooks = books.map((b) =>
+            b.id === editingBook?.id ? responsedata.book : b
+          );
+          setBooks(updatedBooks);
+        } else {
+          // Adicionar novo livro à lista
+          setBooks([...books, responsedata.book]);
+        }
+
+        toast({
+          title: "Cadastro concluído",
+          description: responsedata.message,
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+      })
+      .catch((error) => {
+        console.log({ error });
+
+        toast({
+          title: "Falha no cadastro",
+          description: error,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      });
   }
   useEffect(() => {
     fetch("http://localhost:8000/books/list")
       .then((response) => response.json())
       .then((value) => setBooks(value));
   }, []);
+
+  function startEditing(book: IBooks) {
+    setIsEditing(true);
+    setEditingBook(book);
+    onOpen();
+  }
+
+  function clearInputs() {
+    setAuthor("");
+    setName("");
+    setCode("");
+    setQtd("");
+    setPosition("");
+    setStatus(DEFAULT_STATUS);
+  }
 
   return (
     <Box as={"main"}>
@@ -249,7 +250,10 @@ export default function Books() {
                     </Td>
                     <Td>
                       <HStack>
-                        <Button onClick={onOpen} colorScheme="green">
+                        <Button
+                          onClick={() => startEditing(book)}
+                          colorScheme="green"
+                        >
                           Editar
                         </Button>
                         <Button colorScheme="red">Indisponivel</Button>
@@ -285,7 +289,7 @@ export default function Books() {
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setCode(event.target.value)}
-                value={isEditing ? editingBook?.code || "" : code}
+                value={isEditing ? editingBook?.code || "" : ""}
                 ref={initialRef}
                 placeholder="Codigo"
               />
@@ -296,7 +300,7 @@ export default function Books() {
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setName(event.target.value)}
-                value={isEditing ? editingBook?.code || "" : name}
+                value={isEditing ? editingBook?.name || "" : ""}
                 placeholder="Titulo"
               />
             </FormControl>
@@ -307,7 +311,7 @@ export default function Books() {
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setAuthor(event.target.value)}
-                value={isEditing ? editingBook?.code || "" : author}
+                value={isEditing ? editingBook?.author || "" : ""}
                 placeholder="Autor"
               />
             </FormControl>
@@ -318,7 +322,7 @@ export default function Books() {
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setQtd(event.target.value)}
-                value={isEditing ? editingBook?.code || "" : qtd}
+                value={isEditing ? editingBook?.qtd || "" : ""}
                 type="number"
                 placeholder="Quantidade"
               />
@@ -329,7 +333,7 @@ export default function Books() {
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setPosition(event.target.value)}
-                value={isEditing ? editingBook?.code || "" : position}
+                value={isEditing ? editingBook?.position || "" : ""}
                 type="text"
                 placeholder="Posicao"
               />
@@ -340,7 +344,7 @@ export default function Books() {
               <Select
                 color={"grey"}
                 placeholder="Escolher"
-                value={isEditing ? editingBook?.code || "" : status}
+                value={isEditing ? editingBook?.status || "" : ""}
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setStatus(event.target.value)}
