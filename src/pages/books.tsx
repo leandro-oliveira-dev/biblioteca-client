@@ -134,7 +134,7 @@ export default function Books() {
       body: JSON.stringify(data),
     })
       .then((response) => response.json())
-      .then((responsedata) => {
+      .then((data) => {
         onClose();
         setIsEditing(false);
         setEditingBook(null);
@@ -142,17 +142,17 @@ export default function Books() {
         if (isEditing) {
           // Atualizar a lista de livros com o livro editado
           const updatedBooks = books.map((b) =>
-            b.id === editingBook?.id ? responsedata.book : b
+            b.id === editingBook?.id ? data.book : b
           );
           setBooks(updatedBooks);
         } else {
           // Adicionar novo livro à lista
-          setBooks([...books, responsedata.book]);
+          setBooks([...books, data.book]);
         }
 
         toast({
           title: "Cadastro concluído",
-          description: responsedata.message,
+          description: data.message,
           status: "success",
           duration: 9000,
           isClosable: true,
@@ -270,7 +270,7 @@ export default function Books() {
       <Modal
         isOpen={isOpen}
         onClose={() => {
-          onClose;
+          onClose();
           setIsEditing(false);
           setEditingBook(null);
           clearInputs();
