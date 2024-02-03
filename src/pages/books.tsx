@@ -1,7 +1,7 @@
 import { SetStateAction, useEffect, useRef, useState } from "react";
 import { Menu } from "@/components/Menu";
 
-type Status = "avariado" | "disponivel" | "indisponivel" | "emprestado";
+type Status = "avariado" | "disponivel" | "indisponivel" | "emprestado" | "all";
 
 interface IBooks {
   id: string;
@@ -42,6 +42,8 @@ import {
   Badge,
 } from "@chakra-ui/react";
 import { Header } from "@/components/Header";
+import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
+import { CheckIcon } from "@chakra-ui/icons";
 
 const DEFAULT_STATUS = "disponivel";
 
@@ -50,29 +52,57 @@ const BADGE_STATUS = {
   disponivel: "green",
   indisponivel: "red",
   emprestado: "yellow",
+  all: "blue",
 };
 
 export default function Books() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
+  const [id, setId] = useState<string | null>(null);
   const [name, setName] = useState("");
-  const [code, setCode] = useState("");
-  const [qtd, setQtd] = useState("");
+  const [code, setCode] = useState<number | undefined>(undefined);
+  const [qtd, setQtd] = useState<number | undefined>(undefined);
   const [position, setPosition] = useState("");
   const [author, setAuthor] = useState("");
   const [status, setStatus] = useState(DEFAULT_STATUS);
 
+  const [selectedFilter, setSelectedFilter] = useState<Status>("all");
+
   const [isEditing, setIsEditing] = useState(false);
-  const [editingBook, setEditingBook] = useState<IBooks | null>(null);
 
   const [books, setBooks] = useState<IBooks[]>([]);
+  const [filteredBooks, setFilteredBooks] = useState<IBooks[]>([]);
 
   const toast = useToast();
 
   const initialRef = useRef(null);
 
+  useEffect(() => {
+    fetch("http://localhost:8000/books/list")
+      .then((response) => response.json())
+      .then((value) => {
+        setBooks(value);
+        setFilteredBooks(value);
+      });
+  }, []);
+
+  function filterBooks(status: Status) {
+    if (status === "all") {
+      setFilteredBooks(books);
+
+      return;
+    }
+
+    setFilteredBooks(books);
+
+    setFilteredBooks((prevBooks) =>
+      prevBooks.filter((book) => book.status === status)
+    );
+  }
+
   function handleSaveBook() {
     const data = {
+      id,
       name,
       code,
       author,
@@ -81,46 +111,8 @@ export default function Books() {
       status,
     };
 
-    fetch("http://localhost:8000/books/create", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        onClose();
-
-        clearInputs();
-
-        const newBooks = [...books, data.book];
-
-        setBooks(newBooks);
-
-        toast({
-          title: "Cadastro concluido",
-          description: data.message,
-          status: "success",
-          duration: 9000,
-          isClosable: true,
-        });
-      })
-      .catch((error) => {
-        console.log({ error });
-
-        toast({
-          title: "Falha no cadastro",
-          description: error,
-          status: "error",
-          duration: 9000,
-          isClosable: true,
-        });
-      });
-
     const url = isEditing
-      ? `http://localhost:8000/books/update/${editingBook?.id}`
+      ? `http://localhost:8000/books/update/${id}`
       : "http://localhost:8000/books/create";
 
     const method = isEditing ? "PUT" : "POST";
@@ -137,21 +129,30 @@ export default function Books() {
       .then((data) => {
         onClose();
         setIsEditing(false);
-        setEditingBook(null);
         clearInputs();
         if (isEditing) {
           // Atualizar a lista de livros com o livro editado
-          const updatedBooks = books.map((b) =>
-            b.id === editingBook?.id ? data.book : b
+          const updatedBooks = books.map((book) =>
+            book.id === id ? data.book : book
           );
+
           setBooks(updatedBooks);
+
+          const updatedFilteredBooks = filteredBooks
+            .map((book) => (book.id === id ? data.book : book))
+            .filter((book) => book.status === selectedFilter);
+
+          setFilteredBooks(updatedFilteredBooks);
         } else {
           // Adicionar novo livro à lista
-          setBooks([...books, data.book]);
+          setBooks([data.book, ...books]);
+          setFilteredBooks([data.book, ...filteredBooks]);
         }
 
         toast({
-          title: "Cadastro concluído",
+          title: isEditing
+            ? DEFAULT_MESSAGES.books.edit.SUCCESS
+            : DEFAULT_MESSAGES.books.create.SUCCESS,
           description: data.message,
           status: "success",
           duration: 9000,
@@ -162,7 +163,9 @@ export default function Books() {
         console.log({ error });
 
         toast({
-          title: "Falha no cadastro",
+          title: isEditing
+            ? DEFAULT_MESSAGES.books.edit.ERROR
+            : DEFAULT_MESSAGES.books.create.ERROR,
           description: error,
           status: "error",
           duration: 9000,
@@ -170,25 +173,34 @@ export default function Books() {
         });
       });
   }
-  useEffect(() => {
-    fetch("http://localhost:8000/books/list")
-      .then((response) => response.json())
-      .then((value) => setBooks(value));
-  }, []);
+
+  function createBookState(book: IBooks) {
+    setId(book.id);
+
+    setAuthor(book.author);
+    setName(book.name);
+    setCode(book.code);
+    setQtd(book.qtd);
+    setPosition(book.position);
+    setStatus(DEFAULT_STATUS);
+  }
 
   function startEditing(book: IBooks) {
     setIsEditing(true);
-    setEditingBook(book);
+
+    createBookState(book);
+
     onOpen();
   }
 
   function clearInputs() {
     setAuthor("");
     setName("");
-    setCode("");
-    setQtd("");
+    setCode(undefined);
+    setQtd(undefined);
     setPosition("");
     setStatus(DEFAULT_STATUS);
+    setIsEditing(false);
   }
 
   return (
@@ -205,14 +217,60 @@ export default function Books() {
             width={"100%"}
           >
             <HStack>
-              <Button size={"xs"} colorScheme={BADGE_STATUS["disponivel"]}>
+              <Button
+                onClick={() => {
+                  filterBooks("disponivel");
+                  setSelectedFilter("disponivel");
+                }}
+                size={"xs"}
+                colorScheme={BADGE_STATUS["disponivel"]}
+              >
+                {selectedFilter === "disponivel" && <CheckIcon mr={2} />}
                 Disponivel
               </Button>
-              <Button size={"xs"} colorScheme={BADGE_STATUS["avariado"]}>
+              <Button
+                onClick={() => {
+                  filterBooks("emprestado");
+                  setSelectedFilter("emprestado");
+                }}
+                size={"xs"}
+                colorScheme={BADGE_STATUS["emprestado"]}
+              >
+                {selectedFilter === "emprestado" && <CheckIcon mr={2} />}
+                Emprestado
+              </Button>
+              <Button
+                onClick={() => {
+                  filterBooks("avariado");
+                  setSelectedFilter("avariado");
+                }}
+                size={"xs"}
+                colorScheme={BADGE_STATUS["avariado"]}
+              >
+                {selectedFilter === "avariado" && <CheckIcon mr={2} />}
                 Avariado
               </Button>
-              <Button size={"xs"} colorScheme={BADGE_STATUS["indisponivel"]}>
+              <Button
+                onClick={() => {
+                  filterBooks("indisponivel");
+                  setSelectedFilter("indisponivel");
+                }}
+                size={"xs"}
+                colorScheme={BADGE_STATUS["indisponivel"]}
+              >
+                {selectedFilter === "indisponivel" && <CheckIcon mr={2} />}
                 Indisponivel
+              </Button>
+              <Button
+                onClick={() => {
+                  filterBooks("all");
+                  setSelectedFilter("all");
+                }}
+                size={"xs"}
+                colorScheme={BADGE_STATUS["all"]}
+              >
+                {selectedFilter === "all" && <CheckIcon mr={2} />}
+                Todos
               </Button>
             </HStack>
             <Flex>
@@ -236,11 +294,11 @@ export default function Books() {
                 </Tr>
               </Thead>
               <Tbody>
-                {books?.map((book) => (
+                {filteredBooks?.map((book) => (
                   <Tr key={book.id}>
+                    <Td>{book.code}</Td>
                     <Td>{book.name}</Td>
                     <Td>{book.author}</Td>
-                    <Td>{book.code}</Td>
                     <Td>{book.qtd}</Td>
                     <Td>{book.position}</Td>
                     <Td>
@@ -272,7 +330,6 @@ export default function Books() {
         onClose={() => {
           onClose();
           setIsEditing(false);
-          setEditingBook(null);
           clearInputs();
         }}
       >
@@ -286,10 +343,11 @@ export default function Books() {
             <FormControl>
               <FormLabel>Codigo</FormLabel>
               <Input
+                type="number"
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
-                }) => setCode(event.target.value)}
-                value={isEditing ? editingBook?.code || "" : ""}
+                }) => setCode(Number(event.target.value))}
+                defaultValue={Number(code)}
                 ref={initialRef}
                 placeholder="Codigo"
               />
@@ -300,7 +358,7 @@ export default function Books() {
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setName(event.target.value)}
-                value={isEditing ? editingBook?.name || "" : ""}
+                defaultValue={name}
                 placeholder="Titulo"
               />
             </FormControl>
@@ -311,7 +369,7 @@ export default function Books() {
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setAuthor(event.target.value)}
-                value={isEditing ? editingBook?.author || "" : ""}
+                defaultValue={author}
                 placeholder="Autor"
               />
             </FormControl>
@@ -321,8 +379,8 @@ export default function Books() {
               <Input
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
-                }) => setQtd(event.target.value)}
-                value={isEditing ? editingBook?.qtd || "" : ""}
+                }) => setQtd(Number(event.target.value))}
+                defaultValue={Number(qtd)}
                 type="number"
                 placeholder="Quantidade"
               />
@@ -333,7 +391,7 @@ export default function Books() {
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setPosition(event.target.value)}
-                value={isEditing ? editingBook?.position || "" : ""}
+                defaultValue={position}
                 type="text"
                 placeholder="Posicao"
               />
@@ -344,7 +402,7 @@ export default function Books() {
               <Select
                 color={"grey"}
                 placeholder="Escolher"
-                value={isEditing ? editingBook?.status || "" : ""}
+                defaultValue={status}
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
                 }) => setStatus(event.target.value)}
