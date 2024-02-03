@@ -205,8 +205,7 @@ export default function Books() {
 
   return (
     <Box as={"main"}>
-      <Menu />
-      <VStack color={"#fff"}>
+      <VStack>
         <Header title="Cadastro de livros"></Header>
 
         <VStack>

@@ -1,5 +1,14 @@
+import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Link } from "@chakra-ui/next-js";
-import { HStack } from "@chakra-ui/react";
+
+import {
+  Menu as ChakraMenu,
+  MenuButton,
+  MenuList,
+  Button,
+  VStack,
+  MenuItem,
+} from "@chakra-ui/react";
 
 interface IMenu {
   url: string;
@@ -10,8 +19,18 @@ interface IMenu {
 const MENUS: IMenu[] = [
   { url: "/", title: "Inicio" },
   {
-    url: "/books",
+    url: "",
     title: "Livros",
+    subMenu: [
+      {
+        url: "/books",
+        title: "Lista de livros",
+      },
+      {
+        url: "/report/emprestimo",
+        title: "Relatorio de Emprestimo",
+      },
+    ],
   },
   {
     url: "/online",
@@ -22,23 +41,41 @@ const MENUS: IMenu[] = [
 
 export function Menu() {
   return (
-    <div className="mb-30 grid text-center lg:max-w-xl lg:w--60 lg:mb-30 lg:text-left">
-      <HStack className="text-lg">
-        {MENUS.map((menu) => (
-          <Link
-            bgColor={"#1e283b"}
-            color={"#fff"}
-            px={2}
-            py={1}
-            borderRadius={3}
-            key={menu.title}
-            href={menu.url}
-            rel="noopener noreferrer"
-          >
-            <h2>{menu.title}</h2>
-          </Link>
-        ))}
-      </HStack>
-    </div>
+    <VStack
+      position="fixed"
+      left={0}
+      p={5}
+      w="200px"
+      top={0}
+      h="100%"
+      bg="#1c1c1c"
+      className="text-lg"
+      pt={24}
+    >
+      {MENUS.map((menu) => (
+        <>
+          <ChakraMenu>
+            <Link minW={"100%"} href={menu.url}>
+              <MenuButton
+                minW={"100%"}
+                as={Button}
+                rightIcon={menu.subMenu && <ChevronDownIcon />}
+              >
+                {menu.title}
+              </MenuButton>
+            </Link>
+            {menu?.subMenu && (
+              <MenuList>
+                {menu.subMenu?.map((submenu) => (
+                  <Link href={submenu.url} key={submenu.title}>
+                    <MenuItem>{submenu.title}</MenuItem>
+                  </Link>
+                ))}
+              </MenuList>
+            )}
+          </ChakraMenu>
+        </>
+      ))}
+    </VStack>
   );
 }
