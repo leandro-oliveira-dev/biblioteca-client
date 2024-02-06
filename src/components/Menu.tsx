@@ -27,8 +27,17 @@ const MENUS: IMenu[] = [
         title: "Lista de livros",
       },
       {
-        url: "/report/emprestimo",
+        url: "/emprestimo",
+        title: "Emprestimo de Livros",
+      },
+
+      {
+        url: "/report/relatorioEmprestimo",
         title: "Relatorio de Emprestimo",
+      },
+      {
+        url: "/doarLivro",
+        title: "Doação de livros para biblioteca",
       },
     ],
   },
