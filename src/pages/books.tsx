@@ -1,5 +1,4 @@
 import { SetStateAction, useEffect, useRef, useState } from "react";
-import { Menu } from "@/components/Menu";
 
 type Status = "avariado" | "disponivel" | "indisponivel" | "emprestado" | "all";
 
@@ -77,14 +76,27 @@ export default function Books() {
 
   const initialRef = useRef(null);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [totalItens, setTotalItens] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [hasPreviousPage, setHasPreviousPage] = useState(false);
+  const [hasNextPage, setHasNextPage] = useState(false);
+
   useEffect(() => {
-    fetch("http://localhost:8000/books/list")
+    fetch(
+      `http://localhost:8000/books/list?page=${currentPage}&pageSize=${pageSize}`
+    )
       .then((response) => response.json())
       .then((value) => {
-        setBooks(value);
-        setFilteredBooks(value);
+        setBooks(value.books);
+        setFilteredBooks(value.books);
+        setTotalItens(value.totalBooks);
+        setTotalPages(value.totalPages);
+        setHasPreviousPage(value.hasPreviousPage);
+        setHasNextPage(value.hasNextPage);
       });
-  }, []);
+  }, [currentPage, pageSize]);
 
   function filterBooks(status: Status) {
     if (status === "all") {
@@ -321,6 +333,32 @@ export default function Books() {
               </Tbody>
             </Table>
           </TableContainer>
+          <Box width={"100%"}>
+            <HStack justifyContent={"space-between"}>
+              <span>
+                {currentPage} de {totalPages}
+              </span>
+              <span> {totalItens} Total de Livros</span>
+            </HStack>
+            <HStack>
+              {hasPreviousPage && (
+                <Button
+                  colorScheme="gray"
+                  onClick={() => setCurrentPage(currentPage - 1)}
+                >
+                  anterior
+                </Button>
+              )}
+              {hasNextPage && (
+                <Button
+                  colorScheme="gray"
+                  onClick={() => setCurrentPage(currentPage + 1)}
+                >
+                  próximo
+                </Button>
+              )}
+            </HStack>
+          </Box>
         </VStack>
       </VStack>
 
