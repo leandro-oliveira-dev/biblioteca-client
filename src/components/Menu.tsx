@@ -20,6 +20,15 @@ const MENUS: IMenu[] = [
   { url: "/", title: "Inicio" },
   {
     url: "",
+    title: "Usuários",
+    subMenu: [
+      {
+        url: "/cadastroDeUsuario",
+        title: "Cadastro de Usuários",
+      },]},
+
+  {
+    url: "",
     title: "Livros",
     subMenu: [
       {
@@ -39,8 +48,10 @@ const MENUS: IMenu[] = [
         url: "/doarLivro",
         title: "Doação de livros para biblioteca",
       },
+   
     ],
   },
+  
   {
     url: "/online",
     title: "Online",

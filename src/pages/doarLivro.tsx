@@ -1,7 +1,7 @@
 import { Header } from "@/components/Header";
 import { Box } from "@chakra-ui/react";
 
-export default function Online() {
+export default function doar() {
   return (
     <Box as={"main"}>
       <Header title="Doação de livros"></Header>
