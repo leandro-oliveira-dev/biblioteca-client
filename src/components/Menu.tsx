@@ -63,7 +63,7 @@ export function Menu() {
     >
       {MENUS.map((menu) => (
         <>
-          <ChakraMenu>
+          <ChakraMenu key={menu.title}>
             <Link minW={"100%"} href={menu.url}>
               <MenuButton
                 minW={"100%"}

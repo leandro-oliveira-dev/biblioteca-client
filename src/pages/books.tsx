@@ -108,7 +108,7 @@ export default function Books() {
     setFilteredBooks(books);
 
     setFilteredBooks((prevBooks) =>
-      prevBooks.filter((book) => book.status === status)
+      prevBooks?.filter((book) => book.status === status)
     );
   }
 
@@ -151,8 +151,8 @@ export default function Books() {
           setBooks(updatedBooks);
 
           const updatedFilteredBooks = filteredBooks
-            .map((book) => (book.id === id ? data.book : book))
-            .filter((book) => book.status === selectedFilter);
+            ?.map((book) => (book.id === id ? data.book : book))
+            ?.filter((book) => book.status === selectedFilter);
 
           setFilteredBooks(updatedFilteredBooks);
         } else {
