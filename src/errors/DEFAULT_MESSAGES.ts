@@ -9,4 +9,19 @@ export const DEFAULT_MESSAGES = {
       SUCCESS: "Editado com sucesso",
     },
   },
+
+ usuario:{
+  create:{
+    ERROR:"Falha ao cadastrar o usuário",
+    SUCCESS:"Usuário cadastrado com sucesso",
+  },
+  edit:{
+    ERROR:"Falha ao editar o usuário",
+    SUCCESS: "Usuário editado com sucesso",
+
+  },
+ },
+ 
+
+
 };
