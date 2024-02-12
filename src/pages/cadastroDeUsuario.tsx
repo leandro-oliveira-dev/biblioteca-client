@@ -9,7 +9,7 @@ interface IUsers {
   name:string;   
   email:string;
   password:string;
-  ra:number;
+  ra:string;
 }
 
 import {
@@ -51,7 +51,7 @@ export default function CadastrarUsuario() {
   const [name, setName] = useState("");
   const [email,setEmail]= useState("");
   const [password,setPassword]= useState("");
-  const [ra,setRa]= useState <number | undefined>(undefined); 
+  const [ra,setRa]= useState (""); 
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -151,7 +151,7 @@ export default function CadastrarUsuario() {
             title: isEditing
               ? DEFAULT_MESSAGES.usuario.edit.ERROR
               : DEFAULT_MESSAGES.usuario.create.ERROR,
-            description: error,
+            description: JSON.stringify(error),
             status: "error",
             duration: 9000,
             isClosable: true,
@@ -182,7 +182,7 @@ export default function CadastrarUsuario() {
     function clearInputs() {
       
       setName("");
-      setRa(undefined);
+      setRa("");
       setPassword("");
       setEmail("");
       
@@ -203,7 +203,11 @@ export default function CadastrarUsuario() {
             alignSelf={"flex-start"}
             mt={8}
             width={"100%"}
-          ></HStack>
+          > <Flex justifyContent="flex-end">
+          <Button onClick={onOpen} colorScheme="gray">
+            Cadastrar
+          </Button>
+        </Flex></HStack>
             
           <TableContainer>
             <Table backgroundColor={"#222"} borderRadius={4} variant="simple">
@@ -215,6 +219,7 @@ export default function CadastrarUsuario() {
                   <Th color={"#fff"}>RA</Th>
                  
                   
+                  <Th color={"#fff"}></Th>
                   <Th color={"#fff"}></Th>
                 </Tr>
               </Thead>
@@ -290,11 +295,12 @@ export default function CadastrarUsuario() {
             <FormControl>
               <FormLabel>RA do Aluno</FormLabel>
               <Input
-                type="number"
+                type="text"
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
-                }) => setRa(Number(event.target.value))}
-                defaultValue={Number(ra)}
+                }) => setRa(event.target.value)}
+                defaultValue={ra}
+                
                 ref={initialRef}
                 placeholder="RA"
               />
