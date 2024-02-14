@@ -9,7 +9,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider>
       <Content>
-        <Box color={"#fff"} bg="#333" minHeight="100vh" p={4}>
+        <Box bg="#333" minHeight="100vh" p={4}>
           <Component {...pageProps} />
         </Box>
       </Content>

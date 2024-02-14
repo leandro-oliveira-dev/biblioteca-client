@@ -10,7 +10,7 @@ export const DEFAULT_MESSAGES = {
     },
   },
 
- usuario:{
+ user:{
   create:{
     ERROR:"Falha ao cadastrar o usuário",
     SUCCESS:"Usuário cadastrado com sucesso",
