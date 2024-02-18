@@ -1,4 +1,3 @@
-
 import { SetStateAction, useEffect, useRef, useState } from "react";
 import { Header } from "@/components/Header";
 
@@ -6,10 +5,10 @@ import { Box } from "@chakra-ui/react";
 
 interface IUsers {
   id: string;
-  name:string;   
-  email:string;
-  password:string;
-  ra:string;
+  name: string;
+  email: string;
+  password: string;
+  ra: string;
 }
 
 import {
@@ -35,7 +34,6 @@ import {
   TableContainer,
   Table,
   Tbody,
- 
   HStack,
   Flex,
   Badge,
@@ -45,13 +43,12 @@ import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
 import { CheckIcon } from "@chakra-ui/icons";
 
 export default function CadastrarUsuario() {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [id, setId] = useState<string | null>(null);
   const [name, setName] = useState("");
-  const [email,setEmail]= useState("");
-  const [password,setPassword]= useState("");
-  const [ra,setRa]= useState (""); 
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [ra, setRa] = useState("");
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -82,21 +79,18 @@ export default function CadastrarUsuario() {
       });
   }, [currentPage, pageSize]);
 
-  function handleSaveUsers(){
+  function handleSaveUsers() {
     const data = {
-     id,
-     name,
-     email,
-     password,
-     ra,
-
+      id,
+      name,
+      email,
+      password,
+      ra,
     };
 
-
     const url = isEditing
-    ? `http://localhost:8000/users/update/${id}`
-    : "http://localhost:8000/users/create";
-
+      ? `http://localhost:8000/users/update/${id}`
+      : "http://localhost:8000/users/create";
 
     const method = isEditing ? "PUT" : "POST";
 
@@ -108,7 +102,7 @@ export default function CadastrarUsuario() {
       },
       body: JSON.stringify(data),
     })
-    .then((response) => response.json())
+      .then((response) => response.json())
       .then((data) => {
         onClose();
         setIsEditing(false);
@@ -121,80 +115,72 @@ export default function CadastrarUsuario() {
 
           setUsers(updatedUsers);
 
-          const updatedFilteredUsers = filteredUsers
-            ?.map((users) => (users.id === id ? data.users : users))
-           
+          const updatedFilteredUsers = filteredUsers?.map((users) =>
+            users.id === id ? data.users : users
+          );
 
-            setFilteredUsers(updatedFilteredUsers);
+          setFilteredUsers(updatedFilteredUsers);
+        } else {
+          // Adicionar novo usuário à lista
+          setUsers([data.users, ...users]);
+          setFilteredUsers([data.users, ...filteredUsers]);
+        }
 
-          } else {
-            // Adicionar novo usuário à lista
-            setUsers([data.users, ...users]);
-            setFilteredUsers([data.users, ...filteredUsers]);
-          }
-
-          toast({
-            title: isEditing
-              ? DEFAULT_MESSAGES.usuario.edit.SUCCESS
-              : DEFAULT_MESSAGES.usuario.create.SUCCESS,
-            description: data.message,
-            status: "success",
-            duration: 9000,
-            isClosable: true,
-          });
-        })
-
-        .catch((error) => {
-          console.log({ error });
-  
-          toast({
-            title: isEditing
-              ? DEFAULT_MESSAGES.usuario.edit.ERROR
-              : DEFAULT_MESSAGES.usuario.create.ERROR,
-            description: JSON.stringify(error),
-            status: "error",
-            duration: 9000,
-            isClosable: true,
-          });
+        toast({
+          title: isEditing
+            ? DEFAULT_MESSAGES.usuario.edit.SUCCESS
+            : DEFAULT_MESSAGES.usuario.create.SUCCESS,
+          description: data.message,
+          status: "success",
+          duration: 9000,
+          isClosable: true,
         });
-    }
+      })
 
+      .catch((error) => {
+        console.log({ error });
 
-    function createUsersState(users: IUsers) {
-      setId(users.id);
-  
-    
-      setName(users.name);
-      setEmail(users.email);
-      setPassword(users.password);
-      setRa(users.ra);
-      
-    }
+        toast({
+          title: isEditing
+            ? DEFAULT_MESSAGES.usuario.edit.ERROR
+            : DEFAULT_MESSAGES.usuario.create.ERROR,
+          description: JSON.stringify(error),
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      });
+  }
 
-    function startEditing(users: IUsers) {
-      setIsEditing(true);
-  
-      createUsersState(users);
-  
-      onOpen();
-    }
-  
-    function clearInputs() {
-      
-      setName("");
-      setRa("");
-      setPassword("");
-      setEmail("");
-      
-      setIsEditing(false);
-    }
-  
+  function createUsersState(users: IUsers) {
+    setId(users.id);
 
+    setName(users.name);
+    setEmail(users.email);
+    setPassword(users.password);
+    setRa(users.ra);
+  }
 
+  function startEditing(users: IUsers) {
+    setIsEditing(true);
+
+    createUsersState(users);
+
+    onOpen();
+  }
+
+  function clearInputs() {
+    setName("");
+    setRa("");
+    setPassword("");
+    setEmail("");
+
+    setIsEditing(false);
+  }
 
   return (
     <Box as={"main"}>
-     <VStack>
+      <VStack>
         <Header title="Cadastro de Usuário"></Header>
 
         <VStack>
@@ -203,22 +189,24 @@ export default function CadastrarUsuario() {
             alignSelf={"flex-start"}
             mt={8}
             width={"100%"}
-          > <Flex justifyContent="flex-end">
-          <Button onClick={onOpen} colorScheme="gray">
-            Cadastrar
-          </Button>
-        </Flex></HStack>
-            
+          >
+            {" "}
+            <Flex justifyContent="flex-end">
+              <Button onClick={onOpen} colorScheme="gray">
+                Cadastrar
+              </Button>
+            </Flex>
+          </HStack>
+
           <TableContainer>
             <Table backgroundColor={"#222"} borderRadius={4} variant="simple">
               <Thead>
                 <Tr>
                   <Th color={"#fff"}>Nome</Th>
                   <Th color={"#fff"}>Email</Th>
-                  
+
                   <Th color={"#fff"}>RA</Th>
-                 
-                  
+
                   <Th color={"#fff"}></Th>
                   <Th color={"#fff"}></Th>
                 </Tr>
@@ -228,10 +216,10 @@ export default function CadastrarUsuario() {
                   <Tr key={user.id}>
                     <Td>{user.ra}</Td>
                     <Td>{user.name}</Td>
-                   
+
                     <Td>{user.email}</Td>
                     <Td>{user.password}</Td>
-                 
+
                     <Td>
                       <HStack>
                         <Button
@@ -300,7 +288,6 @@ export default function CadastrarUsuario() {
                   target: { value: SetStateAction<string> };
                 }) => setRa(event.target.value)}
                 defaultValue={ra}
-                
                 ref={initialRef}
                 placeholder="RA"
               />
@@ -327,7 +314,6 @@ export default function CadastrarUsuario() {
               />
             </FormControl>
 
-           
             <FormControl mt={4}>
               <FormLabel>Senha</FormLabel>
               <Input
@@ -339,8 +325,6 @@ export default function CadastrarUsuario() {
                 placeholder="Senha"
               />
             </FormControl>
-
-            
           </ModalBody>
 
           <ModalFooter>
@@ -351,10 +335,6 @@ export default function CadastrarUsuario() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-    
-      
     </Box>
-     
   );
-  
-};
+}
