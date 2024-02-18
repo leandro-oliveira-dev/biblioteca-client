@@ -17,7 +17,7 @@ export default function Doar() {
     }
   };
 
-  function TabelaDoacoes() {
+  /*function TabelaDoacoes() {
     const [doacoes, setDoacoes] = useState([]);
 
     // Função para enviar os dados para o backend
@@ -31,33 +31,35 @@ export default function Doar() {
       } catch (error) {
         console.error("Erro ao enviar os dados:", error);
       }
-    };
+    };*/
 
-    return (
-      <Box as={"main"}>
-        <Header title="Doação de livros"></Header>
-        <div>Escolha a data e horário para a doação:</div>
-        <DateTimePicker onChange={handleChange} value={date} />
-        <div>
-          <button onClick={enviarDados}>Enviar Dados</button>
-          <table>
-            <thead>
-              <tr>
-                <th>Usuário</th>
-                <th>Data de Entrega</th>
-              </tr>
-            </thead>
-            <tbody>
-              {doacoes.map((doacao, index) => (
-                <tr key={index}>
-                  <td>{doacao.usuario}</td>
-                  <td>{doacao.dataEntrega}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </Box>
-    );
-  }
+  return (
+    <Box as={"main"}>
+      <Header title="Doação de livros"></Header>
+      <div>Escolha a data e horário para a doação:</div>
+      <DateTimePicker onChange={handleChange} value={date} />
+    </Box>
+  );
 }
+
+/*
+      <div>
+        <button onClick={enviarDados}>Enviar Dados</button>
+        <table>
+          <thead>
+            <tr>
+              <th>Usuário</th>
+              <th>Data de Entrega</th>
+            </tr>
+          </thead>
+          <tbody>
+            {doacoes.map((doacao, index) => (
+              <tr key={index}>
+                <td>{doacao.usuario}</td>
+                <td>{doacao.dataEntrega}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      */
