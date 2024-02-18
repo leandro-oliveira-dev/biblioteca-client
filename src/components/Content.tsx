@@ -6,6 +6,7 @@ export function Content({ children }: { children: ReactElement }) {
   return (
     <>
       <Menu />
+
       <Box ml={200}>{children}</Box>
     </>
   );

@@ -49,7 +49,6 @@ import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
 import { CheckIcon } from "@chakra-ui/icons";
 
 export default function CadastrarUsuario() {
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [id, setId] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -143,21 +142,21 @@ export default function CadastrarUsuario() {
           duration: 9000,
           isClosable: true,
         });
+      })
+
+      .catch((error) => {
+        console.log({ error });
+
+        toast({
+          title: isEditing
+            ? DEFAULT_MESSAGES.usuario.edit.ERROR
+            : DEFAULT_MESSAGES.usuario.create.ERROR,
+          description: JSON.stringify(error),
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
       });
-
-    // .catch((error) => {
-    //   console.log({ error });
-
-    //   toast({
-    //     title: isEditing
-    //       ? DEFAULT_MESSAGES.usuario.edit.ERROR
-    //       : DEFAULT_MESSAGES.usuario.create.ERROR,
-    //     description: JSON.stringify(error),
-    //     status: "error",
-    //     duration: 9000,
-    //     isClosable: true,
-    //   });
-    // });
   }
 
   function createUsersState(users: IUsers) {
