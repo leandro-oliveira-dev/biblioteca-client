@@ -5,6 +5,10 @@ export default function Online() {
   // Dados dos sites de livros online
   const sitesDeLivros = [
     { nome: "Project Gutenberg", url: "https://www.gutenberg.org/" },
+    {
+      nome: "Project Dominio publico",
+      url: "http://www.dominiopublico.gov.br/pesquisa/PesquisaObraForm.do",
+    },
     { nome: "Google Livros", url: "https://books.google.com.br/" },
     { nome: "Amazon Kindle", url: "https://www.amazon.com.br/Kindle-Store/" },
     { nome: "Many", url: "https://manybooks.net/" },

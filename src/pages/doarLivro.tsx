@@ -1,65 +1,81 @@
 import { Header } from "@/components/Header";
-import { Box, FormControl, FormLabel, FormHelperText } from "@chakra-ui/react";
+import {
+  Box,
+  FormControl,
+  FormLabel,
+  FormHelperText,
+  Button,
+  Table,
+  Tbody,
+  Tr,
+  Td,
+} from "@chakra-ui/react";
 import React, { useState } from "react";
 import DateTimePicker from "react-datetime-picker";
 import axios from "axios";
 
 export default function Doar() {
   const [date, setDate] = useState(new Date());
+  const [donationList, setDonationList] = useState<string[]>([]);
 
-  const handleChange = (newDate: Date | Date[]) => {
-    // Verifica se newDate é um array de Date
-    if (Array.isArray(newDate)) {
-      // Aqui você pode lidar com a seleção de intervalo de datas, se necessário
-      console.log("Intervalo de datas selecionado:", newDate);
-    } else {
-      setDate(newDate);
-    }
+  const handleChange = (newDate: Date) => {
+    setDate(newDate);
   };
 
-  /*function TabelaDoacoes() {
-    const [doacoes, setDoacoes] = useState([]);
+  const handleConfirmDonation = () => {
+    const formattedDate = date.toLocaleString(); // Formata a data para uma string legível
 
-    // Função para enviar os dados para o backend
-    const enviarDados = async () => {
-      try {
-        const resposta = await axios.post("http://localhost:8000/doarLivro", {
-          usuario: "Nome do Usuário",
-          dataEntrega: "2024-02-17", // Data selecionada pelo usuário
-        });
-        setDoacoes(resposta.data);
-      } catch (error) {
-        console.error("Erro ao enviar os dados:", error);
-      }
-    };*/
+    // Adiciona a nova doação à lista de doações
+    setDonationList([...donationList, formattedDate]);
+
+    // Limpa a data selecionada
+    setDate(new Date());
+
+    // Envia os dados para o servidor
+    axios
+      .post("URL_DO_SEU_BACKEND", {
+        donationDate: formattedDate,
+        // Outros dados que você deseja enviar para o servidor
+      })
+      .then((response) => {
+        console.log("Dados enviados com sucesso:", response.data);
+        // Você pode atualizar o estado ou fornecer feedback ao usuário aqui, se necessário
+      })
+      .catch((error) => {
+        console.error("Erro ao enviar dados:", error);
+        // Trate o erro adequadamente, como exibir uma mensagem de erro ao usuário
+      });
+  };
 
   return (
     <Box as={"main"}>
       <Header title="Doação de livros"></Header>
       <div>Escolha a data e horário para a doação:</div>
       <DateTimePicker onChange={handleChange} value={date} />
+      <div style={{ marginTop: "20px" }}>
+        {" "}
+        {/* Ajuste de margem para afastar o botão */}
+        <Button
+          onClick={handleConfirmDonation}
+          colorScheme="blue"
+          style={{ marginTop: "200px" }}
+        >
+          Confirmar Doação
+        </Button>
+      </div>
+      <div style={{ marginTop: "180px" }}>
+        {" "}
+        {/* Ajuste de margem para afastar a tabela */}
+        <Table variant="striped" colorScheme="blue">
+          <Tbody>
+            {donationList.map((donation, index) => (
+              <Tr key={index}>
+                <Td>{donation}</Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </div>
     </Box>
   );
 }
-
-/*
-      <div>
-        <button onClick={enviarDados}>Enviar Dados</button>
-        <table>
-          <thead>
-            <tr>
-              <th>Usuário</th>
-              <th>Data de Entrega</th>
-            </tr>
-          </thead>
-          <tbody>
-            {doacoes.map((doacao, index) => (
-              <tr key={index}>
-                <td>{doacao.usuario}</td>
-                <td>{doacao.dataEntrega}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      */
