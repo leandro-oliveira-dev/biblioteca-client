@@ -25,7 +25,9 @@ const MENUS: IMenu[] = [
       {
         url: "/cadastroDeUsuario",
         title: "Cadastro de Usuários",
-      },]},
+      },
+    ],
+  },
 
   {
     url: "",
@@ -48,10 +50,9 @@ const MENUS: IMenu[] = [
         url: "/doarLivro",
         title: "Doação de livros para biblioteca",
       },
-   
     ],
   },
-  
+
   {
     url: "/online",
     title: "Online",
@@ -74,7 +75,7 @@ export function Menu() {
     >
       {MENUS.map((menu) => (
         <>
-          <ChakraMenu key={menu.title}>
+          <ChakraMenu key={menu.url}>
             <Link minW={"100%"} href={menu.url}>
               <MenuButton
                 minW={"100%"}
@@ -87,7 +88,7 @@ export function Menu() {
             {menu?.subMenu && (
               <MenuList>
                 {menu.subMenu?.map((submenu) => (
-                  <Link href={submenu.url} key={submenu.title}>
+                  <Link href={submenu.url} key={submenu.url}>
                     <MenuItem>{submenu.title}</MenuItem>
                   </Link>
                 ))}
