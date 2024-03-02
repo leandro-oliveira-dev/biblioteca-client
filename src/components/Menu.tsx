@@ -9,6 +9,7 @@ import {
   VStack,
   MenuItem,
 } from "@chakra-ui/react";
+import { Profile } from "./Profile";
 
 interface IMenu {
   url: string;
@@ -57,7 +58,7 @@ const MENUS: IMenu[] = [
     url: "/online",
     title: "Online",
   },
-  { url: "/login", title: "Sair" },
+  { url: "/logout", title: "Sair" },
 ];
 
 export function Menu() {
@@ -73,6 +74,7 @@ export function Menu() {
       className="text-lg"
       pt={24}
     >
+      <Profile />
       {MENUS.map((menu) => (
         <>
           <ChakraMenu key={menu.url}>
