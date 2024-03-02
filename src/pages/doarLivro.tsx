@@ -3,6 +3,9 @@ import { Box, Button, Table, Tbody, Tr, Td } from "@chakra-ui/react";
 import React, { useState } from "react";
 import DateTimePicker from "react-datetime-picker";
 import axios from "axios";
+import "react-datetime-picker/dist/DateTimePicker.css";
+import "react-calendar/dist/Calendar.css";
+import "react-clock/dist/Clock.css";
 
 type ValuePiece = Date | null;
 

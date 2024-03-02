@@ -1,40 +1,30 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-import { api } from "@/lib/api";
 import { Text, Heading, Input, Stack, VStack, Button } from "@chakra-ui/react";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function Login() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [ra, setRa] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("admin@email.com");
+  const [ra, setRa] = useState("1111");
+  const [password, setPassword] = useState("1234");
+  const { login } = useAuth();
 
-  const loginUser = async (email: string, password: string) => {
+  const handleLogin = async () => {
     try {
-      const response = await api.post("/auth", {
+      const token = await login({
         email,
         ra,
         password,
       });
 
-      const { token } = response.data;
-
-      localStorage.setItem("token", token);
-
-      return token;
+      if (token) {
+        router.push("/books");
+      }
     } catch (error) {
-      console.error("Error logging in:", error);
-      throw error;
-    }
-  };
+      router.push("/login");
 
-  const handleLogin = async () => {
-    try {
-      const token = await loginUser(email, password);
-
-      router.push("/books");
-    } catch (error) {
       console.error("Error during login:", error);
     }
   };

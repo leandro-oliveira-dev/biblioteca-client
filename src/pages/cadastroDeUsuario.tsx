@@ -15,6 +15,7 @@ interface IUsers {
   auth: IAuth;
   email: string;
   ra: string;
+  isAdmin: boolean;
 }
 
 import {
@@ -47,6 +48,7 @@ import {
 
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
 import { CheckIcon } from "@chakra-ui/icons";
+import { api } from "@/lib/api";
 
 export default function CadastrarUsuario() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -72,10 +74,9 @@ export default function CadastrarUsuario() {
   const [hasNextPage, setHasNextPage] = useState(false);
 
   useEffect(() => {
-    fetch(
-      `http://localhost:8000/users/list?page=${currentPage}&pageSize=${pageSize}`
-    )
-      .then((response) => response.json())
+    api
+      .get(`/users/list?page=${currentPage}&pageSize=${pageSize}`)
+      .then((response) => response.data)
       .then((value) => {
         setUsers(value.users);
         setFilteredUsers(value.users);
@@ -95,21 +96,12 @@ export default function CadastrarUsuario() {
       ra,
     };
 
-    const url = isEditing
-      ? `http://localhost:8000/users/update/${id}`
-      : "http://localhost:8000/users/create";
+    const url = isEditing ? `/users/update/${id}` : "/users/create";
 
-    const method = isEditing ? "PUT" : "POST";
+    const apiRequest = isEditing ? api.put : api.post;
 
-    fetch(url, {
-      method,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
+    apiRequest(url, data)
+      .then((response) => response.data)
       .then((data) => {
         onClose();
         setIsEditing(false);
@@ -213,6 +205,7 @@ export default function CadastrarUsuario() {
                   <Th color={"#fff"}>Email</Th>
 
                   <Th color={"#fff"}>RA</Th>
+                  <Th color={"#fff"}>Admin</Th>
 
                   <Th color={"#fff"}></Th>
                   <Th color={"#fff"}></Th>
@@ -224,6 +217,11 @@ export default function CadastrarUsuario() {
                     <Td>{user.name}</Td>
                     <Td>{user.auth?.email}</Td>
                     <Td>{user.auth?.ra}</Td>
+                    <Td>
+                      {(user.isAdmin && (
+                        <Badge colorScheme={"green"}>Administrador</Badge>
+                      )) || <Badge colorScheme={"purple"}>Aluno</Badge>}
+                    </Td>
 
                     <Td>
                       <HStack>

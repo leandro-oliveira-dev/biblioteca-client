@@ -1,3 +1,4 @@
+import { api } from "@/lib/api";
 import { useEffect, useState } from "react";
 
 interface IUser {
@@ -10,8 +11,9 @@ export default function Users() {
   const [users, setUsers] = useState<IUser[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:8000/users/list")
-      .then((response) => response.json())
+    api
+      .get("/users/list")
+      .then((response) => response.data)
       .then((value) => setUsers(value));
   }, []);
 
