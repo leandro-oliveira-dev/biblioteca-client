@@ -4,21 +4,10 @@ type Status = "avariado" | "disponivel" | "indisponivel" | "emprestado" | "all";
 
 import {
   Button,
-  FormControl,
-  FormLabel,
   Thead,
   Tr,
   Td,
   Th,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Select,
   useDisclosure,
   useToast,
   VStack,
@@ -33,7 +22,7 @@ import {
 import { Header } from "@/components/Header";
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
 import { CheckIcon } from "@chakra-ui/icons";
-import { pages } from "next/dist/build/templates/app-page";
+import { api } from "@/lib/api";
 
 interface IBooks {
   id: string;
@@ -85,10 +74,9 @@ export function Books() {
   const [hasNextPage, setHasNextPage] = useState(false);
 
   useEffect(() => {
-    fetch(
-      `http://localhost:8000/books/list?page=${currentPage}&pageSize=${pageSize}`
-    )
-      .then((response) => response.json())
+    api
+      .get(`/books/list?page=${currentPage}&pageSize=${pageSize}`)
+      .then((response) => response.data)
       .then((value) => {
         setBooks(value.books);
         setFilteredBooks(value.books);
@@ -124,21 +112,12 @@ export function Books() {
       status,
     };
 
-    const url = isEditing
-      ? `http://localhost:8000/books/update/${id}`
-      : "http://localhost:8000/books/create";
+    const url = isEditing ? `/books/update/${id}` : "/books/create";
 
-    const method = isEditing ? "PUT" : "POST";
+    const apiRequest = isEditing ? api.put : api.post;
 
-    fetch(url, {
-      method,
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    })
-      .then((response) => response.json())
+    apiRequest(url, data)
+      .then((response) => response.data)
       .then((data) => {
         onClose();
         setIsEditing(false);
