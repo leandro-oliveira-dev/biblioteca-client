@@ -1,32 +1,20 @@
 import { Header } from "@/components/Header";
-import {
-  Box,
-  FormControl,
-  FormLabel,
-  FormHelperText,
-  Button,
-  Table,
-  Tbody,
-  Tr,
-  Td,
-} from "@chakra-ui/react";
+import { Box, Button, Table, Tbody, Tr, Td } from "@chakra-ui/react";
 import React, { useState } from "react";
 import DateTimePicker from "react-datetime-picker";
 import axios from "axios";
 
-export default function Doar() {
-  const [date, setDate] = useState(new Date());
-  const [donationList, setDonationList] = useState<string[]>([]);
+type ValuePiece = Date | null;
 
-  const handleChange = (newDate: Date) => {
-    setDate(newDate);
-  };
+type Value = ValuePiece | [ValuePiece, ValuePiece];
+
+export default function Doar() {
+  const [date, setDate] = useState<Value>(new Date());
+  const [donationList, setDonationList] = useState<Value[]>([]);
 
   const handleConfirmDonation = () => {
-    const formattedDate = date.toLocaleString(); // Formata a data para uma string legível
-
     // Adiciona a nova doação à lista de doações
-    setDonationList([...donationList, formattedDate]);
+    setDonationList([...donationList, date]);
 
     // Limpa a data selecionada
     setDate(new Date());
@@ -34,7 +22,7 @@ export default function Doar() {
     // Envia os dados para o servidor
     axios
       .post("URL_DO_SEU_BACKEND", {
-        donationDate: formattedDate,
+        date,
         // Outros dados que você deseja enviar para o servidor
       })
       .then((response) => {
@@ -51,7 +39,7 @@ export default function Doar() {
     <Box as={"main"}>
       <Header title="Doação de livros"></Header>
       <div>Escolha a data e horário para a doação:</div>
-      <DateTimePicker onChange={handleChange} value={date} />
+      <DateTimePicker onChange={setDate} value={date} />
       <div style={{ marginTop: "20px" }}>
         {" "}
         {/* Ajuste de margem para afastar o botão */}
@@ -70,7 +58,7 @@ export default function Doar() {
           <Tbody>
             {donationList.map((donation, index) => (
               <Tr key={index}>
-                <Td>{donation}</Td>
+                <Td>{donation?.toLocaleString()}</Td>
               </Tr>
             ))}
           </Tbody>
