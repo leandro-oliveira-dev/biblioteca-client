@@ -1,6 +1,7 @@
 import { api } from "@/lib/api";
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { appStorage } from "@/lib/storage";
 
 type IUser = {
   id: string;
@@ -47,7 +48,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const isLoginPage = router.pathname === "/login";
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = appStorage.getItem("token");
 
     if (isLoginPage) return;
 
@@ -65,7 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [isLoginPage]);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = appStorage.getItem("token");
 
     console.log({ isLoginPage });
 
@@ -88,7 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         isAdmin: response.data.auth.user.isAdmin,
       });
 
-      localStorage.setItem("token", token);
+      appStorage.setItem("token", token);
 
       return token;
     } catch (error) {
@@ -99,7 +100,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = () => {
     setUser(null);
-    localStorage.removeItem("token");
+    appStorage.removeItem("token");
 
     router.push("/login");
   };

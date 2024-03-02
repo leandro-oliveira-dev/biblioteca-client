@@ -44,7 +44,7 @@ const BADGE_STATUS = {
   all: "blue",
 };
 
-export function Books() {
+export default function Books() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [id, setId] = useState<string | null>(null);

@@ -10,6 +10,7 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import { Profile } from "./Profile";
+import { useAuth } from "@/context/AuthProvider";
 
 interface IMenu {
   url: string;
@@ -58,10 +59,11 @@ const MENUS: IMenu[] = [
     url: "/online",
     title: "Online",
   },
-  { url: "/logout", title: "Sair" },
 ];
 
 export function Menu() {
+  const { logout } = useAuth();
+
   return (
     <VStack
       position="fixed"
@@ -76,29 +78,33 @@ export function Menu() {
     >
       <Profile />
       {MENUS.map((menu) => (
-        <>
-          <ChakraMenu key={menu.url}>
-            <Link minW={"100%"} href={menu.url}>
-              <MenuButton
-                minW={"100%"}
-                as={Button}
-                rightIcon={menu.subMenu && <ChevronDownIcon />}
-              >
-                {menu.title}
-              </MenuButton>
-            </Link>
-            {menu?.subMenu && (
-              <MenuList>
-                {menu.subMenu?.map((submenu) => (
-                  <Link href={submenu.url} key={submenu.url}>
-                    <MenuItem>{submenu.title}</MenuItem>
-                  </Link>
-                ))}
-              </MenuList>
-            )}
-          </ChakraMenu>
-        </>
+        <ChakraMenu key={menu.url}>
+          <Link minW={"100%"} href={menu.url}>
+            <MenuButton
+              minW={"100%"}
+              as={Button}
+              rightIcon={menu.subMenu && <ChevronDownIcon />}
+            >
+              {menu.title}
+            </MenuButton>
+          </Link>
+          {menu?.subMenu && (
+            <MenuList>
+              {menu.subMenu?.map((submenu) => (
+                <Link href={submenu.url} key={submenu.url}>
+                  <MenuItem>{submenu.title}</MenuItem>
+                </Link>
+              ))}
+            </MenuList>
+          )}
+        </ChakraMenu>
       ))}
+
+      <ChakraMenu>
+        <MenuButton onClick={logout} minW={"100%"} as={Button}>
+          Sair
+        </MenuButton>
+      </ChakraMenu>
     </VStack>
   );
 }
