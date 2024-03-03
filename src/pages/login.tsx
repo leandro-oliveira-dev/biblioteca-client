@@ -1,7 +1,15 @@
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-import { Text, Heading, Input, Stack, VStack, Button } from "@chakra-ui/react";
+import {
+  Text,
+  Heading,
+  Input,
+  Stack,
+  VStack,
+  Button,
+  Box,
+} from "@chakra-ui/react";
 import { useAuth } from "@/context/AuthProvider";
 
 export default function Login() {
@@ -30,38 +38,47 @@ export default function Login() {
   };
 
   return (
-    <VStack p={4}>
-      <Heading color={"white"}>Login</Heading>
+    <Box display="flex" flexDirection="row">
+      <VStack p={4}>
+        <Heading color={"white"}>Login</Heading>
+        <Stack color="white" spacing={3}>
+          <Text>RA</Text>
+          <Input
+            variant="outline"
+            type="ra"
+            value={ra}
+            onChange={(e) => setRa(e.target.value)}
+          />
 
-      <Stack color="white" spacing={3}>
-        <Text>RA</Text>
-        <Input
-          variant="outline"
-          type="ra"
-          value={ra}
-          onChange={(e) => setRa(e.target.value)}
+          <Text>Email</Text>
+          <Input
+            variant="outline"
+            type="text"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+
+          <Text>Senha</Text>
+          <Input
+            variant="outline"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+
+          <Button colorScheme="blue" onClick={handleLogin}>
+            Login
+          </Button>
+        </Stack>
+      </VStack>
+
+      {"/public/PREDIO-ETEC-PEDRO-GODOY-PMI-1024x682.jpg"}
+      <Box>
+        <img
+          src="/public/iPREDIO-ETEC-PEDRO-GODOY-PMI-1024x682.jpg"
+          alt="Imagem"
         />
-
-        <Text>Email</Text>
-        <Input
-          variant="outline"
-          type="text"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-
-        <Text>Senha</Text>
-        <Input
-          variant="outline"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-
-        <Button colorScheme="blue" onClick={handleLogin}>
-          Login
-        </Button>
-      </Stack>
-    </VStack>
+      </Box>
+    </Box>
   );
 }
