@@ -70,6 +70,7 @@ export function Menu() {
       left={0}
       p={5}
       w="200px"
+      zIndex={9999999}
       top={0}
       h="100%"
       bg="#1c1c1c"

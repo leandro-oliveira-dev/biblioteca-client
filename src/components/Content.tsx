@@ -1,4 +1,4 @@
-import { Box } from "@chakra-ui/react";
+import { Box, HStack } from "@chakra-ui/react";
 import { Menu } from "@/components/Menu";
 import { ReactElement } from "react";
 import { useRouter } from "next/router";
@@ -6,11 +6,13 @@ import { useRouter } from "next/router";
 export function Content({ children }: { children: ReactElement }) {
   const { pathname } = useRouter();
 
-  return (
-    <>
-      {Boolean(pathname !== "/login") && <Menu />}
+  const isLoginPage = Boolean(pathname === "/login");
 
-      <Box ml={200}>{children}</Box>
-    </>
+  return (
+    <HStack>
+      {!isLoginPage && <Menu />}
+
+      <Box ml={isLoginPage ? 0 : 200}>{children}</Box>
+    </HStack>
   );
 }
