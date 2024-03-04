@@ -179,7 +179,7 @@ export default function Books() {
   return (
     <Box as={"main"}>
       <VStack>
-        <Header title="Cadastro de livros"></Header>
+        <Header title="Reservar livros"></Header>
 
         <VStack>
           <HStack
@@ -245,11 +245,6 @@ export default function Books() {
                 Todos
               </Button>
             </HStack>
-            <Flex>
-              <Button onClick={onOpen} colorScheme="gray">
-                Cadastrar
-              </Button>
-            </Flex>
           </HStack>
 
           <TableContainer>
@@ -280,7 +275,9 @@ export default function Books() {
                     </Td>
                     <Td>
                       <HStack>
-                        <Button colorScheme="red">Emprestar</Button>
+                        <Button onClick={onOpen} colorScheme="red">
+                          Emprestar
+                        </Button>
                       </HStack>
                     </Td>
                   </Tr>

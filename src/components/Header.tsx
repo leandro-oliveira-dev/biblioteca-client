@@ -5,9 +5,5 @@ interface IHeaderParams {
 }
 
 export function Header({ title }: IHeaderParams) {
-  return (
-    <Heading textAlign={"center"} color="#fff">
-      {title}
-    </Heading>
-  );
+  return <Heading textAlign={"center"}>{title}</Heading>;
 }
