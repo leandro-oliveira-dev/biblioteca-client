@@ -23,6 +23,7 @@ import { Header } from "@/components/Header";
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
 import { CheckIcon } from "@chakra-ui/icons";
 import { api } from "@/lib/api";
+import { useAuth } from "@/context/AuthProvider";
 
 interface IBooks {
   id: string;
@@ -72,6 +73,8 @@ export default function Books() {
   const [totalPages, setTotalPages] = useState(0);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
+  const { user } = useAuth();
+  const userId = (user as NonNullable<typeof user>).id;
 
   useEffect(() => {
     api
@@ -90,12 +93,9 @@ export default function Books() {
   function filterBooks(status: Status) {
     if (status === "all") {
       setFilteredBooks(books);
-
       return;
     }
-
     setFilteredBooks(books);
-
     setFilteredBooks((prevBooks) =>
       prevBooks?.filter((book) => book.status === status)
     );
@@ -111,11 +111,8 @@ export default function Books() {
       position,
       status,
     };
-
     const url = isEditing ? `/books/update/${id}` : "/books/create";
-
     const apiRequest = isEditing ? api.put : api.post;
-
     apiRequest(url, data)
       .then((response) => response.data)
       .then((data) => {
@@ -123,24 +120,18 @@ export default function Books() {
         setIsEditing(false);
         clearInputs();
         if (isEditing) {
-          // Atualizar a lista de livros com o livro editado
           const updatedBooks = books.map((book) =>
             book.id === id ? data.book : book
           );
-
           setBooks(updatedBooks);
-
           const updatedFilteredBooks = filteredBooks
             ?.map((book) => (book.id === id ? data.book : book))
             ?.filter((book) => book.status === selectedFilter);
-
           setFilteredBooks(updatedFilteredBooks);
         } else {
-          // Adicionar novo livro à lista
           setBooks([data.book, ...books]);
           setFilteredBooks([data.book, ...filteredBooks]);
         }
-
         toast({
           title: isEditing
             ? DEFAULT_MESSAGES.books.edit.SUCCESS
@@ -153,7 +144,6 @@ export default function Books() {
       })
       .catch((error) => {
         console.log({ error });
-
         toast({
           title: isEditing
             ? DEFAULT_MESSAGES.books.edit.ERROR
@@ -175,6 +165,38 @@ export default function Books() {
     setStatus(DEFAULT_STATUS);
     setIsEditing(false);
   }
+
+  const handleBorrowBook = (id: string, userId: string) => {
+    api
+      .put(`/books/borrow/${id}`, { userId: userId, duration: 7 })
+      .then((response) => {
+        const updatedBooks = books.map((book) =>
+          book.id === id ? { ...book, status: "emprestado" } : book
+        ) as IBooks[]; // Adicionando o tipo aqui
+        setBooks(updatedBooks);
+
+        const updatedFilteredBooks = filteredBooks.map((book) =>
+          book.id === id ? { ...book, status: "emprestado" } : book
+        ) as IBooks[]; // Adicionando o tipo aqui
+        setFilteredBooks(updatedFilteredBooks);
+
+        toast({
+          title: "Livro emprestado com sucesso!",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      })
+      .catch((error) => {
+        toast({
+          title: "Erro ao emprestar livro",
+          description: error.message || "Ocorreu um erro ao emprestar o livro.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+  };
 
   return (
     <Box as={"main"}>
@@ -275,7 +297,11 @@ export default function Books() {
                     </Td>
                     <Td>
                       <HStack>
-                        <Button onClick={onOpen} colorScheme="red">
+                        <Button
+                          onClick={() => handleBorrowBook(book.id, userId)}
+                          colorScheme="red"
+                          disabled={book.status !== "disponivel"}
+                        >
                           Emprestar
                         </Button>
                       </HStack>
