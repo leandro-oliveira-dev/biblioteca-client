@@ -9,6 +9,7 @@ import {
   VStack,
   Button,
   Box,
+  Image,
 } from "@chakra-ui/react";
 import { useAuth } from "@/context/AuthProvider";
 
@@ -39,46 +40,48 @@ export default function Login() {
 
   return (
     <Box display="flex" flexDirection="row">
-      <VStack p={4}>
-        <Heading color={"white"}>Login</Heading>
-        <Stack color="white" spacing={3}>
-          <Text>RA</Text>
-          <Input
-            variant="outline"
-            type="ra"
-            value={ra}
-            onChange={(e) => setRa(e.target.value)}
-          />
+      <Box p={4} flex={1}>
+        <VStack>
+          <Heading color={"white"}>Login</Heading>
+          <Stack color="white" spacing={3}>
+            <Text>RA</Text>
+            <Input
+              variant="outline"
+              type="ra"
+              value={ra}
+              onChange={(e) => setRa(e.target.value)}
+            />
 
-          <Text>Email</Text>
-          <Input
-            variant="outline"
-            type="text"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+            <Text>Email</Text>
+            <Input
+              variant="outline"
+              type="text"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
 
-          <Text>Senha</Text>
-          <Input
-            variant="outline"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+            <Text>Senha</Text>
+            <Input
+              variant="outline"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
 
-          <Button colorScheme="blue" onClick={handleLogin}>
-            Login
-          </Button>
-        </Stack>
-      </VStack>
-
-      {"/public/PREDIO-ETEC-PEDRO-GODOY-PMI-1024x682.jpg"}
-      <Box>
-        <img
-          src="/public/iPREDIO-ETEC-PEDRO-GODOY-PMI-1024x682.jpg"
-          alt="Imagem"
-        />
+            <Button colorScheme="blue" onClick={handleLogin}>
+              Login
+            </Button>
+          </Stack>
+        </VStack>
       </Box>
+      <Box
+        flex={1}
+        style={{
+          backgroundImage: 'url("/PREDIO-ETEC-PEDRO-GODOY-PMI-1024x682.jpg")',
+          backgroundSize: "cover",
+          justifyContent: "flex-end",
+        }}
+      ></Box>
     </Box>
   );
 }
