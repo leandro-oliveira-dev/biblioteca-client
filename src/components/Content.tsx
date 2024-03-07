@@ -12,7 +12,9 @@ export function Content({ children }: { children: ReactElement }) {
     <HStack>
       {!isLoginPage && <Menu />}
 
-      <Box ml={isLoginPage ? 0 : 200}>{children}</Box>
+      <Box width={"100%"} ml={isLoginPage ? 0 : 200}>
+        {children}
+      </Box>
     </HStack>
   );
 }
