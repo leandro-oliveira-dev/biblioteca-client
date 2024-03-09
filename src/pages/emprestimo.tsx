@@ -33,6 +33,11 @@ interface IBooks {
   position: string;
   status: Status;
   code: number;
+  BorrowedBook: [
+    {
+      id: string;
+    }
+  ];
 }
 
 const DEFAULT_STATUS = "disponivel";
@@ -74,7 +79,6 @@ export default function Books() {
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
   const { user } = useAuth();
-  const userId = (user as NonNullable<typeof user>).id;
 
   useEffect(() => {
     api
@@ -277,6 +281,7 @@ export default function Books() {
                   <Th color={"#fff"}>Titulo</Th>
                   <Th color={"#fff"}>Autor</Th>
                   <Th color={"#fff"}>Quantidade</Th>
+                  <Th color={"#fff"}>Emprestados</Th>
                   <Th color={"#fff"}>Posição</Th>
                   <Th color={"#fff"}>Status</Th>
                   <Th color={"#fff"}></Th>
@@ -289,6 +294,7 @@ export default function Books() {
                     <Td>{book.name}</Td>
                     <Td>{book.author}</Td>
                     <Td>{book.qtd}</Td>
+                    <Td>{book.BorrowedBook.length}</Td>
                     <Td>{book.position}</Td>
                     <Td>
                       <Badge colorScheme={BADGE_STATUS[book.status]}>
@@ -298,7 +304,9 @@ export default function Books() {
                     <Td>
                       <HStack>
                         <Button
-                          onClick={() => handleBorrowBook(book.id, userId)}
+                          onClick={() =>
+                            handleBorrowBook(book.id, String(user?.id))
+                          }
                           colorScheme="red"
                           disabled={book.status !== "disponivel"}
                         >
