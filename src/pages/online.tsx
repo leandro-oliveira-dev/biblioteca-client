@@ -10,7 +10,11 @@ export default function Online() {
       url: "http://www.dominiopublico.gov.br/pesquisa/PesquisaObraForm.do",
     },
     { nome: "Google Livros", url: "https://books.google.com.br/" },
+    { nome: "Google Livros", url: "https://books.google.com.br/" },
+    { nome: "Google Livros", url: "https://books.google.com.br/" },
     { nome: "Amazon Kindle", url: "https://www.amazon.com.br/Kindle-Store/" },
+    { nome: "Many", url: "https://manybooks.net/" },
+    { nome: "Many", url: "https://manybooks.net/" },
     { nome: "Many", url: "https://manybooks.net/" },
     { nome: "Open Library", url: "https://openlibrary.org/" },
     // Adicione mais sites conforme necessário
