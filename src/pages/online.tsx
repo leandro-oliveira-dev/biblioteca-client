@@ -15,6 +15,8 @@ export default function Online() {
       url: "https://www.amazon.com.br/s?k=livros+gratis&rh=n%3A5308307011%2Cp_36%3A5560478011&dc&ds=v1%3AJHunmiBD5P7AKJR7Kd%2FkEUwZEemrOO4nxP9leEY9%2B04&qid=1710199554&rnid=5560477011&ref=sr_nr_p_36_1",
     },
     { nome: "Many", url: "https://manybooks.net/" },
+    { nome: "Many", url: "https://manybooks.net/" },
+    { nome: "Many", url: "https://manybooks.net/" },
     { nome: "Open Library", url: "https://openlibrary.org/" },
     // Adicione mais sites conforme necessário
   ];
