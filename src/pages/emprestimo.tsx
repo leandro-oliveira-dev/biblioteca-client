@@ -1,14 +1,14 @@
-import { SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Status = "avariado" | "disponivel" | "indisponivel" | "emprestado" | "all";
 
 import {
   Button,
+  Text,
   Thead,
   Tr,
   Td,
   Th,
-  useDisclosure,
   useToast,
   VStack,
   TableContainer,
@@ -16,11 +16,9 @@ import {
   Tbody,
   Box,
   HStack,
-  Flex,
   Badge,
 } from "@chakra-ui/react";
 import { Header } from "@/components/Header";
-import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
 import { CheckIcon } from "@chakra-ui/icons";
 import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthProvider";
@@ -33,14 +31,14 @@ interface IBooks {
   position: string;
   status: Status;
   code: number;
+  alreadyBorrowed: boolean;
   BorrowedBook: [
     {
       id: string;
+      userId: string;
     }
   ];
 }
-
-const DEFAULT_STATUS = "disponivel";
 
 const BADGE_STATUS = {
   avariado: "orange",
@@ -51,29 +49,15 @@ const BADGE_STATUS = {
 };
 
 export default function Books() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const [id, setId] = useState<string | null>(null);
-  const [name, setName] = useState("");
-  const [code, setCode] = useState<number | undefined>(undefined);
-  const [qtd, setQtd] = useState<number | undefined>(undefined);
-  const [position, setPosition] = useState("");
-  const [author, setAuthor] = useState("");
-  const [status, setStatus] = useState(DEFAULT_STATUS);
-
   const [selectedFilter, setSelectedFilter] = useState<Status>("all");
-
-  const [isEditing, setIsEditing] = useState(false);
 
   const [books, setBooks] = useState<IBooks[]>([]);
   const [filteredBooks, setFilteredBooks] = useState<IBooks[]>([]);
 
   const toast = useToast();
 
-  const initialRef = useRef(null);
-
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [totalItens, setTotalItens] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
@@ -105,84 +89,27 @@ export default function Books() {
     );
   }
 
-  function handleSaveBook() {
-    const data = {
-      id,
-      name,
-      code,
-      author,
-      qtd,
-      position,
-      status,
-    };
-    const url = isEditing ? `/books/update/${id}` : "/books/create";
-    const apiRequest = isEditing ? api.put : api.post;
-    apiRequest(url, data)
-      .then((response) => response.data)
-      .then((data) => {
-        onClose();
-        setIsEditing(false);
-        clearInputs();
-        if (isEditing) {
-          const updatedBooks = books.map((book) =>
-            book.id === id ? data.book : book
-          );
-          setBooks(updatedBooks);
-          const updatedFilteredBooks = filteredBooks
-            ?.map((book) => (book.id === id ? data.book : book))
-            ?.filter((book) => book.status === selectedFilter);
-          setFilteredBooks(updatedFilteredBooks);
-        } else {
-          setBooks([data.book, ...books]);
-          setFilteredBooks([data.book, ...filteredBooks]);
-        }
-        toast({
-          title: isEditing
-            ? DEFAULT_MESSAGES.books.edit.SUCCESS
-            : DEFAULT_MESSAGES.books.create.SUCCESS,
-          description: data.message,
-          status: "success",
-          duration: 9000,
-          isClosable: true,
-        });
-      })
-      .catch((error) => {
-        console.log({ error });
-        toast({
-          title: isEditing
-            ? DEFAULT_MESSAGES.books.edit.ERROR
-            : DEFAULT_MESSAGES.books.create.ERROR,
-          description: error,
-          status: "error",
-          duration: 9000,
-          isClosable: true,
-        });
-      });
-  }
-
-  function clearInputs() {
-    setAuthor("");
-    setName("");
-    setCode(undefined);
-    setQtd(undefined);
-    setPosition("");
-    setStatus(DEFAULT_STATUS);
-    setIsEditing(false);
-  }
-
-  const handleBorrowBook = (id: string, userId: string) => {
+  const handleBorrowBook = (bookId: string, userId: string) => {
     api
-      .put(`/books/borrow/${id}`, { userId: userId, duration: 7 })
+      .put(`/books/borrow/${bookId}`, { userId: userId, duration: 7 })
       .then((response) => {
-        const updatedBooks = books.map((book) =>
-          book.id === id ? { ...book, status: "emprestado" } : book
-        ) as IBooks[]; // Adicionando o tipo aqui
-        setBooks(updatedBooks);
+        const currrentBookIndex = books.findIndex((book) => book.id === bookId);
 
-        const updatedFilteredBooks = filteredBooks.map((book) =>
-          book.id === id ? { ...book, status: "emprestado" } : book
-        ) as IBooks[]; // Adicionando o tipo aqui
-        setFilteredBooks(updatedFilteredBooks);
+        setBooks((prevBooks) => {
+          const updatedBooks = [...prevBooks];
+          updatedBooks[currrentBookIndex] = response.data.book;
+          return updatedBooks;
+        });
+
+        const currrentFilteredBookIndex = filteredBooks.findIndex(
+          (book) => book.id === bookId
+        );
+
+        setFilteredBooks((prevFilteredBooks) => {
+          const updatedFilteredBooks = [...prevFilteredBooks];
+          updatedFilteredBooks[currrentFilteredBookIndex] = response.data.book;
+          return updatedFilteredBooks;
+        });
 
         toast({
           title: "Livro emprestado com sucesso!",
@@ -194,7 +121,9 @@ export default function Books() {
       .catch((error) => {
         toast({
           title: "Erro ao emprestar livro",
-          description: error.message || "Ocorreu um erro ao emprestar o livro.",
+          description:
+            error.response.data.message ||
+            "Ocorreu um erro ao emprestar o livro.",
           status: "error",
           duration: 5000,
           isClosable: true,
@@ -294,7 +223,7 @@ export default function Books() {
                     <Td>{book.name}</Td>
                     <Td>{book.author}</Td>
                     <Td>{book.qtd}</Td>
-                    <Td>{book.BorrowedBook.length}</Td>
+                    <Td>{book?.BorrowedBook?.length || 0}</Td>
                     <Td>{book.position}</Td>
                     <Td>
                       <Badge colorScheme={BADGE_STATUS[book.status]}>
@@ -303,15 +232,19 @@ export default function Books() {
                     </Td>
                     <Td>
                       <HStack>
-                        <Button
-                          onClick={() =>
-                            handleBorrowBook(book.id, String(user?.id))
-                          }
-                          colorScheme="red"
-                          disabled={book.status !== "disponivel"}
-                        >
-                          Emprestar
-                        </Button>
+                        {book.alreadyBorrowed ? (
+                          <Text>Livro emprestado</Text>
+                        ) : (
+                          <Button
+                            onClick={() =>
+                              handleBorrowBook(book.id, String(user?.id))
+                            }
+                            colorScheme="red"
+                            disabled={book.status !== "disponivel"}
+                          >
+                            Emprestar
+                          </Button>
+                        )}
                       </HStack>
                     </Td>
                   </Tr>

@@ -68,8 +68,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const token = appStorage.getItem("token");
 
-    console.log({ isLoginPage });
-
     if (!token && !isLoginPage) {
       router.push("/login");
     }
