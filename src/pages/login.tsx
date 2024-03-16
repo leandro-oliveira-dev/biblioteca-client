@@ -42,7 +42,7 @@ export default function Login() {
     <Box display="flex" flexDirection="row">
       <Box p={4} flex={1}>
         <VStack>
-          <Heading color={"white"}>Login</Heading>
+          <Heading color={"white"}>Bibli-Etec</Heading>
           <Stack color="white" spacing={3}>
             <Text>RA</Text>
             <Input
