@@ -17,9 +17,10 @@ import {
   Box,
   HStack,
   Badge,
+  Link,
 } from "@chakra-ui/react";
 import { Header } from "@/components/Header";
-import { CheckIcon } from "@chakra-ui/icons";
+import { CheckIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthProvider";
 
@@ -220,7 +221,17 @@ export default function Books() {
                 {filteredBooks?.map((book) => (
                   <Tr key={book.id}>
                     <Td>{book.code}</Td>
-                    <Td>{book.name}</Td>
+                    <Td>
+                      <Link
+                        style={{
+                          textDecoration: "underline",
+                        }}
+                        href={`/report/relatorioEmprestimo?book=${book.id}`}
+                      >
+                        {book.name}
+                      </Link>
+                      <ArrowRightIcon ml={"1rem"} />
+                    </Td>
                     <Td>{book.author}</Td>
                     <Td>{book.qtd}</Td>
                     <Td>{book?.BorrowedBook?.length || 0}</Td>
