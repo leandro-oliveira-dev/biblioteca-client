@@ -37,8 +37,13 @@ export default function Online() {
             <Tr key={index}>
               <Td>{site.nome}</Td>
               <Td>
-                <a href={site.url} target="_blank" rel="noopener noreferrer">
-                  {site.url}
+                <a
+                  style={{ textDecoration: "underline", color: "#8a8aff" }}
+                  href={site.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Acessar
                 </a>
               </Td>
             </Tr>
