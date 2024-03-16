@@ -84,7 +84,7 @@ export default function RelatorioEmprestar() {
                   <Th color={"#fff"}>RA</Th>
                   <Th color={"#fff"}>Nome</Th>
                   <Th color={"#fff"}>Data do emprestimo</Th>
-                  <Th color={"#fff"}>Dias restantes</Th>
+                  <Th color={"#fff"}>Dias do aluno com o Livro</Th>
                   <Th color={"#fff"}>Status</Th>
                   <Th color={"#fff"}>Data da devolucao</Th>
                   <Th color={"#fff"}></Th>
@@ -107,8 +107,8 @@ export default function RelatorioEmprestar() {
                       )) || <Badge colorScheme={"green"}>No prazo</Badge>}
                     </Td>
                     <Td>
-                      {borrowedBook?.returnAt
-                        ? new Date(borrowedBook?.returnAt).toLocaleDateString(
+                      {borrowedBook.returnAt
+                        ? new Date(borrowedBook.returnAt).toLocaleDateString(
                             "pt-BR"
                           )
                         : ""}
