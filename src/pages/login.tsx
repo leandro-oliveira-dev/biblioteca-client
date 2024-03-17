@@ -75,11 +75,11 @@ export default function Login() {
         </VStack>
       </Box>
       <Box
-        flex={1}
+        flex={3}
         style={{
           backgroundImage: 'url("/PREDIO-ETEC-PEDRO-GODOY-PMI-1024x682.jpg")',
-          backgroundSize: "cover",
-          justifyContent: "flex-end",
+          backgroundSize: "100% 100%", // Estende para cobrir todo o lado direito verticalmente
+          backgroundPosition: "right",
         }}
       ></Box>
     </Box>
