@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import { Header } from "@/components/Header";
 import { useState, useEffect, useCallback } from "react";
 
@@ -65,13 +66,14 @@ export default function RelatorioEmprestar() {
       });
   }, [currentPage, pageSize, router]);
 
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const returnDaysLeft = useCallback((borrowedDate: Date) => {
     return differenceInDays(addDays(new Date(), 7), new Date(borrowedDate));
   }, []);
 
   return (
     <Box as={"main"}>
-      <Header title="Detalhes do Emprestimo"></Header>
+      <Header title="Detalhes do Usuário"></Header>
 
       <VStack>
         <Header title={book?.name as string}></Header>
@@ -83,10 +85,10 @@ export default function RelatorioEmprestar() {
                 <Tr>
                   <Th color={"#fff"}>RA</Th>
                   <Th color={"#fff"}>Nome</Th>
-                  <Th color={"#fff"}>Data do emprestimo</Th>
-                  <Th color={"#fff"}>Dias do aluno com o Livro</Th>
+                  <Th color={"#fff"}>Data de criação</Th>
+                  <Th color={"#fff"}>Dias do aluno no sistema</Th>
                   <Th color={"#fff"}>Status</Th>
-                  <Th color={"#fff"}>Data da devolucao</Th>
+
                   <Th color={"#fff"}></Th>
                 </Tr>
               </Thead>
@@ -115,9 +117,7 @@ export default function RelatorioEmprestar() {
                     </Td>
                     <Td>
                       <HStack>
-                        <Button colorScheme="green">
-                          Marcar como devolvido
-                        </Button>
+                        <Button colorScheme="green">Desbloquear aluno</Button>
                       </HStack>
                     </Td>
                   </Tr>

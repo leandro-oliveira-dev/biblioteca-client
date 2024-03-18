@@ -45,12 +45,27 @@ const MENUS: IMenu[] = [
       },
 
       {
-        url: "/report/relatorioEmprestimo",
-        title: "Relatorio de Emprestimo",
-      },
-      {
         url: "/doarLivro",
         title: "Doação de livros para biblioteca",
+      },
+    ],
+  },
+  {
+    url: "",
+    title: "Relatórios",
+    subMenu: [
+      {
+        url: "/report/relatorioEmprestimo",
+        title: "Relatório de Emprestimo",
+      },
+      {
+        url: "/report/relatorioUsuario",
+        title: "Relatório usuário",
+      },
+
+      {
+        url: "/report/relatorioLivro",
+        title: "Relatório de livros",
       },
     ],
   },
