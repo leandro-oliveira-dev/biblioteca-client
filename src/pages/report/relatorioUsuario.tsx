@@ -54,12 +54,12 @@ export default function RelatorioEmprestar() {
   useEffect(() => {
     api
       .get(
-        `/books/${router.query.book}/borrowed-report/?page=${currentPage}&pageSize=${pageSize}`
+        `/users/${router.query.userId}/usuario-report/?page=${currentPage}&pageSize=${pageSize}`
       )
       .then((response) => response.data)
       .then((value) => {
         setBorrowedBooks(value.borrowedBooks);
-        setUser(value.user);
+        setUser(value.userId);
         setTotalItens(value.totalBooks);
         setTotalPages(value.totalPages);
         setHasPreviousPage(value.hasPreviousPage);

@@ -78,8 +78,9 @@ export default function Login() {
         flex={3}
         style={{
           backgroundImage: 'url("/PREDIO-ETEC-PEDRO-GODOY-PMI-1024x682.jpg")',
-          backgroundSize: "100% 100%", // Estende para cobrir todo o lado direito verticalmente
+          backgroundSize: "cover", // Cobrir toda a área do contêiner
           backgroundPosition: "right",
+          height: "100vh", // Definir a altura igual à altura da janela de exibição
         }}
       ></Box>
     </Box>
