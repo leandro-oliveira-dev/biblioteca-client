@@ -33,15 +33,16 @@ interface IBorrowedBook {
   };
 }
 
-interface IBook {
+interface IUser {
   id: string;
   name: string;
+  createdAt: Date;
 }
 
 export default function RelatorioEmprestar() {
   const router = useRouter();
   const [borrowedBooks, setBorrowedBooks] = useState<IBorrowedBook[]>([]);
-  const [book, setBook] = useState<IBook>();
+  const [user, setUser] = useState<IUser>();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -58,7 +59,7 @@ export default function RelatorioEmprestar() {
       .then((response) => response.data)
       .then((value) => {
         setBorrowedBooks(value.borrowedBooks);
-        setBook(value.book);
+        setUser(value.user);
         setTotalItens(value.totalBooks);
         setTotalPages(value.totalPages);
         setHasPreviousPage(value.hasPreviousPage);
@@ -76,7 +77,7 @@ export default function RelatorioEmprestar() {
       <Header title="Detalhes do Usuário"></Header>
 
       <VStack>
-        <Header title={book?.name as string}></Header>
+        <Header title={user?.name as string}></Header>
 
         <VStack>
           <TableContainer>
