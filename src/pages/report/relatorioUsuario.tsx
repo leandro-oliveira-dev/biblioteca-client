@@ -21,28 +21,18 @@ import { useRouter } from "next/router";
 import { differenceInDays } from "date-fns/differenceInDays";
 import { addDays } from "date-fns/addDays";
 
-interface IBorrowedBook {
-  id: string;
-  createdAt: Date;
-  returnAt?: Date;
-  user: {
-    auth: {
-      ra: string;
-    };
-    name: string;
-  };
-}
-
 interface IUser {
   id: string;
   name: string;
   createdAt: Date;
+  enabled: boolean;
+  auth: { ra: string };
 }
 
 export default function RelatorioEmprestar() {
   const router = useRouter();
-  const [borrowedBooks, setBorrowedBooks] = useState<IBorrowedBook[]>([]);
-  const [user, setUser] = useState<IUser>();
+
+  const [users, setUsers] = useState<IUser[]>();
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -53,13 +43,10 @@ export default function RelatorioEmprestar() {
 
   useEffect(() => {
     api
-      .get(
-        `/users/${router.query.userId}/usuario-report/?page=${currentPage}&pageSize=${pageSize}`
-      )
+      .get(`/users/usuario-report/?page=${currentPage}&pageSize=${pageSize}`)
       .then((response) => response.data)
       .then((value) => {
-        setBorrowedBooks(value.borrowedBooks);
-        setUser(value.userId);
+        setUsers(value);
         setTotalItens(value.totalBooks);
         setTotalPages(value.totalPages);
         setHasPreviousPage(value.hasPreviousPage);
@@ -67,7 +54,6 @@ export default function RelatorioEmprestar() {
       });
   }, [currentPage, pageSize, router]);
 
-  // eslint-disable-next-line react-hooks/rules-of-hooks
   const returnDaysLeft = useCallback((borrowedDate: Date) => {
     return differenceInDays(addDays(new Date(), 7), new Date(borrowedDate));
   }, []);
@@ -77,8 +63,6 @@ export default function RelatorioEmprestar() {
       <Header title="Detalhes do Usuário"></Header>
 
       <VStack>
-        <Header title={user?.name as string}></Header>
-
         <VStack>
           <TableContainer>
             <Table backgroundColor={"#222"} borderRadius={4} variant="simple">
@@ -94,28 +78,16 @@ export default function RelatorioEmprestar() {
                 </Tr>
               </Thead>
               <Tbody>
-                {borrowedBooks?.map((borrowedBook) => (
-                  <Tr key={borrowedBook.id}>
-                    <Td>{borrowedBook.user.auth.ra}</Td>
-                    <Td>{borrowedBook.user.name}</Td>
+                {users?.map((user) => (
+                  <Tr key={user.id}>
+                    <Td>{user.auth.ra}</Td>
+                    <Td>{user.name}</Td>
                     <Td>
-                      {new Date(borrowedBook.createdAt).toLocaleDateString(
-                        "pt-BR"
-                      )}
+                      {new Date(user.createdAt).toLocaleDateString("pt-BR")}
                     </Td>
-                    <Td>{returnDaysLeft(borrowedBook.createdAt)}</Td>
-                    <Td>
-                      {(returnDaysLeft(borrowedBook.createdAt) > 7 && (
-                        <Badge colorScheme={"red"}> Atrasado</Badge>
-                      )) || <Badge colorScheme={"green"}>No prazo</Badge>}
-                    </Td>
-                    <Td>
-                      {borrowedBook.returnAt
-                        ? new Date(borrowedBook.returnAt).toLocaleDateString(
-                            "pt-BR"
-                          )
-                        : ""}
-                    </Td>
+                    <Td></Td>
+                    <Td>{user.enabled ? "Ativo" : "Bloqueado"}</Td>
+
                     <Td>
                       <HStack>
                         <Button colorScheme="green">Desbloquear aluno</Button>
