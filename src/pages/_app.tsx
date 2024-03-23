@@ -11,7 +11,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <ChakraProvider>
       <AuthProvider>
         <Content>
-          <Box color={"#fff"} bg="#333" minHeight="100vh" p={4}>
+          <Box color={"#fff"} bg="#333" minHeight="100vh">
             <Component {...pageProps} />
           </Box>
         </Content>
