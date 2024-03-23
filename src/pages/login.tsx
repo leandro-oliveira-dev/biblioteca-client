@@ -9,12 +9,16 @@ import {
   VStack,
   Button,
   Box,
-  Image,
+  Alert,
+  AlertIcon,
 } from "@chakra-ui/react";
 import { useAuth } from "@/context/AuthProvider";
+import Head from "next/head";
 
 export default function Login() {
   const router = useRouter();
+  const [error, setError] = useState("");
+
   const [email, setEmail] = useState("admin@email.com");
   const [ra, setRa] = useState("1111");
   const [password, setPassword] = useState("1234");
@@ -22,28 +26,32 @@ export default function Login() {
 
   const handleLogin = async () => {
     try {
-      const token = await login({
+      await login({
         email,
         ra,
         password,
       });
-
-      if (token) {
-        router.push("/books");
-      }
     } catch (error) {
-      router.push("/login");
-
-      console.error("Error during login:", error);
+      setError("Login ou senha invalidos");
+      console.log("Error during login:", error);
     }
   };
 
   return (
     <Box display="flex" flexDirection="row">
+      <Head>
+        <title>Login Biblioteca</title>
+      </Head>
       <Box p={4} flex={1}>
         <VStack>
           <Heading color={"white"}>Bibli-Etec</Heading>
           <Stack color="white" spacing={3}>
+            {error.length > 0 && (
+              <Alert status="error">
+                <AlertIcon />
+                Dados de login invalidos
+              </Alert>
+            )}
             <Text>RA</Text>
             <Input
               variant="outline"

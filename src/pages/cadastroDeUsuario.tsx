@@ -64,7 +64,6 @@ export default function CadastrarUsuario() {
 
   const toast = useToast();
   const initialRef = useRef(null);
-  const [filteredUsers, setFilteredUsers] = useState<IUsers[]>([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -79,7 +78,6 @@ export default function CadastrarUsuario() {
       .then((response) => response.data)
       .then((value) => {
         setUsers(value.users);
-        setFilteredUsers(value.users);
         setTotalItens(value.totalUsers);
         setTotalPages(value.totalPages);
         setHasPreviousPage(value.hasPreviousPage);
@@ -114,16 +112,9 @@ export default function CadastrarUsuario() {
           );
 
           setUsers(updatedUsers);
-
-          const updatedFilteredUsers = filteredUsers?.map((users) =>
-            users.id === id ? data.users : users
-          );
-
-          setFilteredUsers(updatedFilteredUsers);
         } else {
           // Adicionar novo usuário à lista
           setUsers([data.user, ...users]);
-          setFilteredUsers([data.user, ...filteredUsers]);
         }
 
         toast({
@@ -213,7 +204,7 @@ export default function CadastrarUsuario() {
                 </Tr>
               </Thead>
               <Tbody>
-                {filteredUsers?.map((user) => (
+                {users?.map((user) => (
                   <Tr key={user.id}>
                     <Td>{user.name}</Td>
                     <Td>{user.auth?.email}</Td>
