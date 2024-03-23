@@ -47,10 +47,10 @@ import {
 } from "@chakra-ui/react";
 
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
-import { CheckIcon } from "@chakra-ui/icons";
-import { api } from "@/lib/api";
+import { useAuth } from "@/context/AuthProvider";
 
 export default function CadastrarUsuario() {
+  const { api } = useAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [id, setId] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -84,8 +84,9 @@ export default function CadastrarUsuario() {
         setTotalPages(value.totalPages);
         setHasPreviousPage(value.hasPreviousPage);
         setHasNextPage(value.hasNextPage);
-      });
-  }, [currentPage, pageSize]);
+      })
+      .catch((error) => console.log(error));
+  }, [api, currentPage, pageSize]);
 
   function handleSaveUsers() {
     const data = {

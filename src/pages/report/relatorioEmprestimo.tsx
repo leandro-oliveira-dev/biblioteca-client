@@ -15,10 +15,10 @@ import {
   HStack,
   Badge,
 } from "@chakra-ui/react";
-import { api } from "@/lib/api";
 import { useRouter } from "next/router";
 import { differenceInDays } from "date-fns/differenceInDays";
 import { addDays } from "date-fns/addDays";
+import { useAuth } from "@/context/AuthProvider";
 
 interface IBorrowedBook {
   id: string;
@@ -39,6 +39,7 @@ interface IBook {
 
 export default function RelatorioEmprestar() {
   const router = useRouter();
+  const { api } = useAuth();
   const [borrowedBooks, setBorrowedBooks] = useState<IBorrowedBook[]>([]);
   const [book, setBook] = useState<IBook>();
 
@@ -62,8 +63,9 @@ export default function RelatorioEmprestar() {
         setTotalPages(value.totalPages);
         setHasPreviousPage(value.hasPreviousPage);
         setHasNextPage(value.hasNextPage);
-      });
-  }, [currentPage, pageSize, router]);
+      })
+      .catch((error) => console.log(error));
+  }, [currentPage, pageSize, router, api]);
 
   const returnDaysLeft = useCallback((borrowedDate: Date) => {
     return differenceInDays(addDays(new Date(), 7), new Date(borrowedDate));

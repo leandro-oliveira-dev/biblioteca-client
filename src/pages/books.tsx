@@ -43,7 +43,7 @@ import {
 import { Header } from "@/components/Header";
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
 import { CheckIcon } from "@chakra-ui/icons";
-import { api } from "@/lib/api";
+import { useAuth } from "@/context/AuthProvider";
 
 const DEFAULT_STATUS = "disponivel";
 
@@ -57,6 +57,7 @@ const BADGE_STATUS = {
 
 export default function Books() {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { api } = useAuth();
 
   const [id, setId] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -95,8 +96,9 @@ export default function Books() {
         setTotalPages(value.totalPages);
         setHasPreviousPage(value.hasPreviousPage);
         setHasNextPage(value.hasNextPage);
-      });
-  }, [currentPage, pageSize]);
+      })
+      .catch((error) => console.log(error));
+  }, [currentPage, pageSize, api]);
 
   function filterBooks(status: Status) {
     if (status === "all") {

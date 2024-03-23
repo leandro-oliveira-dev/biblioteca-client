@@ -21,7 +21,6 @@ import {
 } from "@chakra-ui/react";
 import { Header } from "@/components/Header";
 import { CheckIcon, ArrowRightIcon } from "@chakra-ui/icons";
-import { api } from "@/lib/api";
 import { useAuth } from "@/context/AuthProvider";
 
 interface IBooks {
@@ -63,7 +62,7 @@ export default function Books() {
   const [totalPages, setTotalPages] = useState(0);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
-  const { user } = useAuth();
+  const { user, api } = useAuth();
 
   useEffect(() => {
     api
@@ -76,8 +75,9 @@ export default function Books() {
         setTotalPages(value.totalPages);
         setHasPreviousPage(value.hasPreviousPage);
         setHasNextPage(value.hasNextPage);
-      });
-  }, [currentPage, pageSize]);
+      })
+      .catch((error) => console.log(error));
+  }, [currentPage, pageSize, api]);
 
   function filterBooks(status: Status) {
     if (status === "all") {

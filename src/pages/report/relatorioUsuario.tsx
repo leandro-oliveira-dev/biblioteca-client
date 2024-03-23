@@ -17,8 +17,8 @@ import {
   HStack,
   Badge,
 } from "@chakra-ui/react";
-import { api } from "@/lib/api";
 import { useRouter } from "next/router";
+import { useAuth } from "@/context/AuthProvider";
 
 interface IUser {
   id: string;
@@ -29,6 +29,7 @@ interface IUser {
 }
 
 export default function RelatorioEmprestar() {
+  const { api } = useAuth();
   const router = useRouter();
 
   const [users, setUsers] = useState<IUser[]>();
@@ -50,8 +51,9 @@ export default function RelatorioEmprestar() {
         setTotalPages(value.totalPages);
         setHasPreviousPage(value.hasPreviousPage);
         setHasNextPage(value.hasNextPage);
-      });
-  }, [currentPage, pageSize, router]);
+      })
+      .catch((error) => console.log(error));
+  }, [api, currentPage, pageSize, router]);
 
   return (
     <Box as={"main"}>
