@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import { Header } from "@/components/Header";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
+import { differenceInDays } from "date-fns";
 
 import {
   Button,
@@ -18,13 +19,11 @@ import {
 } from "@chakra-ui/react";
 import { api } from "@/lib/api";
 import { useRouter } from "next/router";
-import { differenceInDays } from "date-fns/differenceInDays";
-import { addDays } from "date-fns/addDays";
 
 interface IUser {
   id: string;
   name: string;
-  createdAt: Date;
+  created_at: Date;
   enabled: boolean;
   auth: { ra: string };
 }
@@ -54,10 +53,6 @@ export default function RelatorioEmprestar() {
       });
   }, [currentPage, pageSize, router]);
 
-  const returnDaysLeft = useCallback((borrowedDate: Date) => {
-    return differenceInDays(addDays(new Date(), 7), new Date(borrowedDate));
-  }, []);
-
   return (
     <Box as={"main"}>
       <Header title="Detalhes do Usuário"></Header>
@@ -80,12 +75,14 @@ export default function RelatorioEmprestar() {
               <Tbody>
                 {users?.map((user) => (
                   <Tr key={user.id}>
-                    <Td>{user.auth.ra}</Td>
+                    <Td>{user?.auth?.ra}</Td>
                     <Td>{user.name}</Td>
                     <Td>
-                      {new Date(user.createdAt).toLocaleDateString("pt-BR")}
+                      {new Date(user.created_at).toLocaleDateString("pt-BR")}
                     </Td>
-                    <Td></Td>
+                    <Td>
+                      {differenceInDays(new Date(), user.created_at)} dias
+                    </Td>
                     <Td>{user.enabled ? "Ativo" : "Bloqueado"}</Td>
 
                     <Td>
