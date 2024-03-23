@@ -156,9 +156,9 @@ export default function CadastrarUsuario() {
     setId(users.id);
 
     setName(users.name);
-    setEmail(users.email);
+    setEmail(users.auth.email);
     setPassword(users.password);
-    setRa(users.ra);
+    setRa(users.auth.ra);
   }
 
   function startEditing(users: IUsers) {
@@ -315,18 +315,6 @@ export default function CadastrarUsuario() {
                 }) => setEmail(event.target.value)}
                 defaultValue={email}
                 placeholder="Email"
-              />
-            </FormControl>
-
-            <FormControl mt={4}>
-              <FormLabel>Senha</FormLabel>
-              <Input
-                onChange={(event: {
-                  target: { value: SetStateAction<string> };
-                }) => setPassword(event.target.value)}
-                defaultValue={password}
-                type="text"
-                placeholder="Senha"
               />
             </FormControl>
           </ModalBody>
