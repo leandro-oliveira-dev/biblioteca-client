@@ -297,7 +297,6 @@ export default function CadastrarUsuario() {
                 placeholder="Nome"
               />
             </FormControl>
-
             <FormControl mt={4}>
               <FormLabel>Email</FormLabel>
               <Input
@@ -307,7 +306,21 @@ export default function CadastrarUsuario() {
                 defaultValue={email}
                 placeholder="Email"
               />
-            </FormControl>
+            </FormControl>{" "}
+            {isEditing ? (
+              ""
+            ) : (
+              <FormControl mt={4}>
+                <FormLabel>Senha</FormLabel>
+                <Input
+                  onChange={(event: {
+                    target: { value: SetStateAction<string> };
+                  }) => setPassword(event.target.value)}
+                  defaultValue={password}
+                  placeholder="Senha"
+                />
+              </FormControl>
+            )}
           </ModalBody>
 
           <ModalFooter>
