@@ -28,8 +28,8 @@ export default function Online() {
       <Table colorScheme="teal" mt={4} bg="gray.700">
         <Thead>
           <Tr>
-            <Th>Site</Th>
-            <Th>Link</Th>
+            <Th color="white">Site</Th>
+            <Th color="white">Link</Th>
           </Tr>
         </Thead>
         <Tbody>

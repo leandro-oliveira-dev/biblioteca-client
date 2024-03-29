@@ -182,7 +182,7 @@ export default function CadastrarUsuario() {
             width={"100%"}
           >
             {" "}
-            <Flex justifyContent="flex-end">
+            <Flex justifyContent="flex-end" width="100%">
               <Button onClick={onOpen} colorScheme="gray">
                 Cadastrar
               </Button>
