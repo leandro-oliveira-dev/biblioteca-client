@@ -143,7 +143,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isAdmin: response.data.auth.user.isAdmin,
     });
 
-    router.push("/books");
+    router.push("/inicio");
   };
 
   const logout = () => {
