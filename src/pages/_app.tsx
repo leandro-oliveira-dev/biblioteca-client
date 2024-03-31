@@ -11,6 +11,7 @@ const theme = extendTheme({
     initialColorMode: "dark",
     useSystemColorMode: false,
   },
+
   styles: {
     global: {
       body: {
@@ -19,7 +20,7 @@ const theme = extendTheme({
           color: "white",
         },
         _light: {
-          bg: "#fff",
+          bg: "#f1f1f1",
           color: "black",
         },
       },

@@ -1,7 +1,34 @@
 import { SetStateAction, useEffect, useRef, useState } from "react";
 import { Header } from "@/components/Header";
-
-import { Box, useColorMode } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
+import {
+  Button,
+  FormControl,
+  FormLabel,
+  Thead,
+  Tr,
+  Td,
+  Th,
+  Input,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
+  useToast,
+  VStack,
+  TableContainer,
+  Table,
+  Tbody,
+  HStack,
+  Flex,
+  Badge,
+} from "@chakra-ui/react";
+import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
+import { useAuth } from "@/context/AuthProvider";
 
 interface IAuth {
   email: string;
@@ -19,37 +46,6 @@ interface IUsers {
   enabled: boolean;
 }
 
-import {
-  Button,
-  FormControl,
-  FormLabel,
-  Thead,
-  Tr,
-  Td,
-  Th,
-  Input,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-  Select,
-  useDisclosure,
-  useToast,
-  VStack,
-  TableContainer,
-  Table,
-  Tbody,
-  HStack,
-  Flex,
-  Badge,
-} from "@chakra-ui/react";
-
-import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
-import { useAuth } from "@/context/AuthProvider";
-
 export default function CadastrarUsuario() {
   const { api } = useAuth();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -58,8 +54,6 @@ export default function CadastrarUsuario() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [ra, setRa] = useState("");
-
-  const { colorMode } = useColorMode();
 
   const [isEditing, setIsEditing] = useState(false);
 
@@ -110,7 +104,6 @@ export default function CadastrarUsuario() {
         clearInputs();
         if (isEditing) {
           // Atualizar a lista de usuario com o usuario editado
-
           setUsers((currentUsers) => {
             const editedUsers = currentUsers.map((user) => {
               if (user.id !== data.user.id) return user;
@@ -248,14 +241,14 @@ export default function CadastrarUsuario() {
                     <Td>
                       <HStack>
                         <Button
-                          onClick={() => startEditing(user)}
                           colorScheme="green"
+                          onClick={() => startEditing(user)}
                         >
                           Editar
                         </Button>
                         {user.enabled ? (
                           <Button
-                            colorScheme={colorMode === "light" ? "red" : "gray"}
+                            colorScheme="red"
                             onClick={() => blockUser(user.id)}
                           >
                             Bloquear
