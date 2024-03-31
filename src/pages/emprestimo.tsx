@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 type Status = "avariado" | "disponivel" | "indisponivel" | "emprestado" | "all";
-
+import { Button as AppButton } from "@/components/ui/Button";
 import {
   Button,
   Text,
@@ -204,17 +204,17 @@ export default function Books() {
           </HStack>
 
           <TableContainer>
-            <Table backgroundColor={"#222"} borderRadius={4} variant="simple">
+            <Table borderRadius={4} variant="simple">
               <Thead>
                 <Tr>
-                  <Th color={"#fff"}>Codigo</Th>
-                  <Th color={"#fff"}>Titulo</Th>
-                  <Th color={"#fff"}>Autor</Th>
-                  <Th color={"#fff"}>Quantidade</Th>
-                  <Th color={"#fff"}>Emprestados</Th>
-                  <Th color={"#fff"}>Posição</Th>
-                  <Th color={"#fff"}>Status</Th>
-                  <Th color={"#fff"}></Th>
+                  <Th>Codigo</Th>
+                  <Th>Titulo</Th>
+                  <Th>Autor</Th>
+                  <Th>Quantidade</Th>
+                  <Th>Emprestados</Th>
+                  <Th>Posição</Th>
+                  <Th>Status</Th>
+                  <Th></Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -246,7 +246,7 @@ export default function Books() {
                         {book.alreadyBorrowed ? (
                           <Text>Livro emprestado</Text>
                         ) : (
-                          <Button
+                          <AppButton
                             onClick={() =>
                               handleBorrowBook(book.id, String(user?.id))
                             }
@@ -254,7 +254,7 @@ export default function Books() {
                             disabled={book.status !== "disponivel"}
                           >
                             Emprestar
-                          </Button>
+                          </AppButton>
                         )}
                       </HStack>
                     </Td>
@@ -273,7 +273,7 @@ export default function Books() {
             <HStack>
               {hasPreviousPage && (
                 <Button
-                  colorScheme="gray"
+                  colorScheme="blue"
                   onClick={() => setCurrentPage(currentPage - 1)}
                 >
                   anterior
@@ -281,7 +281,7 @@ export default function Books() {
               )}
               {hasNextPage && (
                 <Button
-                  colorScheme="gray"
+                  colorScheme="blue"
                   onClick={() => setCurrentPage(currentPage + 1)}
                 >
                   próximo

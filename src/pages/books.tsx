@@ -12,6 +12,8 @@ interface IBooks {
   code: number;
 }
 
+import { Button as AppButton } from "@/components/ui/Button";
+
 import {
   Button,
   FormControl,
@@ -39,6 +41,7 @@ import {
   HStack,
   Flex,
   Badge,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { Header } from "@/components/Header";
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
@@ -58,6 +61,9 @@ const BADGE_STATUS = {
 export default function Books() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { api } = useAuth();
+
+  const bg = useColorModeValue("red.500", "red.500");
+  const color = useColorModeValue("white", "white");
 
   const [id, setId] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -287,23 +293,23 @@ export default function Books() {
               </Button>
             </HStack>
             <Flex>
-              <Button onClick={onOpen} colorScheme="gray">
+              <Button onClick={onOpen} colorScheme="blue">
                 Cadastrar
               </Button>
             </Flex>
           </HStack>
 
           <TableContainer>
-            <Table backgroundColor={"#222"} borderRadius={4} variant="simple">
+            <Table borderRadius={4} variant="simple">
               <Thead>
                 <Tr>
-                  <Th color={"#fff"}>Codigo</Th>
-                  <Th color={"#fff"}>Titulo</Th>
-                  <Th color={"#fff"}>Autor</Th>
-                  <Th color={"#fff"}>Quantidade</Th>
-                  <Th color={"#fff"}>Posição</Th>
-                  <Th color={"#fff"}>Status</Th>
-                  <Th color={"#fff"}></Th>
+                  <Th>Codigo</Th>
+                  <Th>Titulo</Th>
+                  <Th>Autor</Th>
+                  <Th>Quantidade</Th>
+                  <Th>Posição</Th>
+                  <Th>Status</Th>
+                  <Th></Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -327,7 +333,7 @@ export default function Books() {
                         >
                           Editar
                         </Button>
-                        <Button colorScheme="red">Indisponivel</Button>
+                        <AppButton colorScheme={"red"}>Indisponivel</AppButton>
                       </HStack>
                     </Td>
                   </Tr>
@@ -345,7 +351,7 @@ export default function Books() {
             <HStack>
               {hasPreviousPage && (
                 <Button
-                  colorScheme="gray"
+                  colorScheme="blue"
                   onClick={() => setCurrentPage(currentPage - 1)}
                 >
                   anterior
@@ -353,7 +359,7 @@ export default function Books() {
               )}
               {hasNextPage && (
                 <Button
-                  colorScheme="gray"
+                  colorScheme="blue"
                   onClick={() => setCurrentPage(currentPage + 1)}
                 >
                   próximo

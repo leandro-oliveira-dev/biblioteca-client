@@ -2,22 +2,7 @@ import { SetStateAction, useEffect, useRef, useState } from "react";
 import { Header } from "@/components/Header";
 
 import { Box, useColorMode } from "@chakra-ui/react";
-
-interface IAuth {
-  email: string;
-  ra: string;
-}
-
-interface IUsers {
-  id: string;
-  name: string;
-  password: string;
-  auth: IAuth;
-  email: string;
-  ra: string;
-  isAdmin: boolean;
-  enabled: boolean;
-}
+import { Button as AppButton } from "@/components/ui/Button";
 
 import {
   Button,
@@ -49,6 +34,22 @@ import {
 
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
 import { useAuth } from "@/context/AuthProvider";
+
+interface IAuth {
+  email: string;
+  ra: string;
+}
+
+interface IUsers {
+  id: string;
+  name: string;
+  password: string;
+  auth: IAuth;
+  email: string;
+  ra: string;
+  isAdmin: boolean;
+  enabled: boolean;
+}
 
 export default function CadastrarUsuario() {
   const { api } = useAuth();
@@ -213,24 +214,24 @@ export default function CadastrarUsuario() {
           >
             {" "}
             <Flex justifyContent="flex-end" width="100%">
-              <Button onClick={onOpen} colorScheme="gray">
+              <Button onClick={onOpen} colorScheme="blue">
                 Cadastrar
               </Button>
             </Flex>
           </HStack>
 
           <TableContainer>
-            <Table backgroundColor={"#222"} borderRadius={4} variant="simple">
+            <Table borderRadius={4} variant="simple">
               <Thead>
                 <Tr>
-                  <Th color={"#fff"}>Nome</Th>
-                  <Th color={"#fff"}>Email</Th>
+                  <Th>Nome</Th>
+                  <Th>Email</Th>
 
-                  <Th color={"#fff"}>RA</Th>
-                  <Th color={"#fff"}>Admin</Th>
+                  <Th>RA</Th>
+                  <Th>Admin</Th>
 
-                  <Th color={"#fff"}></Th>
-                  <Th color={"#fff"}></Th>
+                  <Th></Th>
+                  <Th></Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -254,12 +255,12 @@ export default function CadastrarUsuario() {
                           Editar
                         </Button>
                         {user.enabled ? (
-                          <Button
-                            colorScheme={colorMode === "light" ? "red" : "gray"}
+                          <AppButton
+                            colorScheme={"red"}
                             onClick={() => blockUser(user.id)}
                           >
                             Bloquear
-                          </Button>
+                          </AppButton>
                         ) : null}
                       </HStack>
                     </Td>
@@ -278,7 +279,7 @@ export default function CadastrarUsuario() {
             <HStack>
               {hasPreviousPage && (
                 <Button
-                  colorScheme="gray"
+                  colorScheme="blue"
                   onClick={() => setCurrentPage(currentPage - 1)}
                 >
                   anterior
@@ -286,7 +287,7 @@ export default function CadastrarUsuario() {
               )}
               {hasNextPage && (
                 <Button
-                  colorScheme="gray"
+                  colorScheme="blue"
                   onClick={() => setCurrentPage(currentPage + 1)}
                 >
                   próximo

@@ -5,34 +5,9 @@ import "@/styles/globals.css";
 import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
 
 import type { AppProps } from "next/app";
+import { theme as customTheme } from "@/styles/theme";
 
-const theme = extendTheme({
-  config: {
-    initialColorMode: "dark",
-    useSystemColorMode: false,
-  },
-
-  styles: {
-    global: {
-      body: {
-        _dark: {
-          bg: "#333",
-          color: "white",
-        },
-        _light: {
-          bg: "#f1f1f1",
-          color: "black",
-        },
-      },
-      button: {
-        color: "#333",
-      },
-      option: {
-        color: "#333",
-      },
-    },
-  },
-});
+const theme = extendTheme(customTheme);
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

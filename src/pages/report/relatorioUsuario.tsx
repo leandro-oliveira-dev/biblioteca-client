@@ -87,16 +87,16 @@ export default function RelatorioEmprestar() {
       <VStack>
         <VStack>
           <TableContainer>
-            <Table backgroundColor={"#222"} borderRadius={4} variant="simple">
+            <Table borderRadius={4} variant="simple">
               <Thead>
                 <Tr>
-                  <Th color={"#fff"}>RA</Th>
-                  <Th color={"#fff"}>Nome</Th>
-                  <Th color={"#fff"}>Data de criação</Th>
-                  <Th color={"#fff"}>Dias do aluno no sistema</Th>
-                  <Th color={"#fff"}>Status</Th>
+                  <Th>RA</Th>
+                  <Th>Nome</Th>
+                  <Th>Data de criação</Th>
+                  <Th>Dias do aluno no sistema</Th>
+                  <Th>Status</Th>
 
-                  <Th color={"#fff"}></Th>
+                  <Th></Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -110,7 +110,13 @@ export default function RelatorioEmprestar() {
                     <Td>
                       {differenceInDays(new Date(), user.created_at)} dias
                     </Td>
-                    <Td>{user.enabled ? "Ativo" : "Bloqueado"}</Td>
+                    <Td>
+                      {user.enabled ? (
+                        <Badge colorScheme={"green"}>Ativo</Badge>
+                      ) : (
+                        <Badge colorScheme={"red"}>Bloqueado</Badge>
+                      )}
+                    </Td>
 
                     <Td>
                       {!user.enabled ? (

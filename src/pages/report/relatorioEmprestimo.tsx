@@ -80,16 +80,16 @@ export default function RelatorioEmprestar() {
 
         <VStack>
           <TableContainer>
-            <Table backgroundColor={"#222"} borderRadius={4} variant="simple">
+            <Table borderRadius={4} variant="simple">
               <Thead>
                 <Tr>
-                  <Th color={"#fff"}>RA</Th>
-                  <Th color={"#fff"}>Nome</Th>
-                  <Th color={"#fff"}>Data do emprestimo</Th>
-                  <Th color={"#fff"}>Dias do aluno com o Livro</Th>
-                  <Th color={"#fff"}>Status</Th>
-                  <Th color={"#fff"}>Data da devolucao</Th>
-                  <Th color={"#fff"}></Th>
+                  <Th>RA</Th>
+                  <Th>Nome</Th>
+                  <Th>Data do emprestimo</Th>
+                  <Th>Dias do aluno com o Livro</Th>
+                  <Th>Status</Th>
+                  <Th>Data da devolucao</Th>
+                  <Th></Th>
                 </Tr>
               </Thead>
               <Tbody>
@@ -137,7 +137,7 @@ export default function RelatorioEmprestar() {
             <HStack>
               {hasPreviousPage && (
                 <Button
-                  colorScheme="gray"
+                  colorScheme="blue"
                   onClick={() => setCurrentPage(currentPage - 1)}
                 >
                   anterior

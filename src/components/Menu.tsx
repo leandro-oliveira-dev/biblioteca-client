@@ -116,7 +116,7 @@ export function Menu() {
             <MenuList>
               {menu.subMenu?.map((submenu) => (
                 <Link href={submenu.url} key={submenu.url}>
-                  <MenuItem color={"black"}>{submenu.title}</MenuItem>
+                  <MenuItem>{submenu.title}</MenuItem>
                 </Link>
               ))}
             </MenuList>
