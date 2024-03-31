@@ -106,7 +106,6 @@ export default function CadastrarUsuario() {
         setIsEditing(false);
         clearInputs();
         if (isEditing) {
-          console.log({ data });
           // Atualizar a lista de usuario com o usuario editado
 
           setUsers((currentUsers) => {

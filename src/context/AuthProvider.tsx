@@ -107,8 +107,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       .get<IResponseUser>("/users")
       .then((response) => response.data)
       .then((userResponse) => {
-        console.log({ userResponse });
-
         setUser({
           token,
           id: userResponse.id,
