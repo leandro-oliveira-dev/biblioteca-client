@@ -16,6 +16,7 @@ interface IUsers {
   email: string;
   ra: string;
   isAdmin: boolean;
+  enabled: boolean;
 }
 
 import {
@@ -48,6 +49,7 @@ import {
 
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
 import { useAuth } from "@/context/AuthProvider";
+import { error } from "console";
 
 export default function CadastrarUsuario() {
   const { api } = useAuth();
@@ -174,6 +176,28 @@ export default function CadastrarUsuario() {
     setIsEditing(false);
   }
 
+  function blockUser(userId: string) {
+    api
+      .delete(`/users/delete/${userId}`)
+      .then(() => {
+        toast({
+          title: "Usuário bloqueado com sucesso!!!",
+          description: "",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+      })
+      .catch((error) => {
+        toast({
+          title: "Erro ao bloquear!!!",
+          description: error,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      });
+  }
   return (
     <Box as={"main"}>
       <VStack>
@@ -228,7 +252,14 @@ export default function CadastrarUsuario() {
                         >
                           Editar
                         </Button>
-                        <Button colorScheme="red">Bloqueado</Button>
+                        {user.enabled ? (
+                          <Button
+                            colorScheme="red"
+                            onClick={() => blockUser(user.id)}
+                          >
+                            Bloquear
+                          </Button>
+                        ) : null}
                       </HStack>
                     </Td>
                   </Tr>

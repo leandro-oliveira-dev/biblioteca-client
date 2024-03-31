@@ -16,6 +16,7 @@ import {
   Box,
   HStack,
   Badge,
+  useToast,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/AuthProvider";
@@ -31,6 +32,7 @@ interface IUser {
 export default function RelatorioEmprestar() {
   const { api } = useAuth();
   const router = useRouter();
+  const toast = useToast();
 
   const [users, setUsers] = useState<IUser[]>();
 
@@ -54,6 +56,29 @@ export default function RelatorioEmprestar() {
       })
       .catch((error) => console.log(error));
   }, [api, currentPage, pageSize, router]);
+
+  function enableUser(userId: string) {
+    api
+      .put(`/users/enable/${userId}`)
+      .then(() => {
+        toast({
+          title: "Usuário desbloqueado com sucesso!!!",
+          description: "",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+      })
+      .catch((error) => {
+        toast({
+          title: "Erro ao desbloquear!!!",
+          description: error,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      });
+  }
 
   return (
     <Box as={"main"}>
@@ -88,9 +113,14 @@ export default function RelatorioEmprestar() {
                     <Td>{user.enabled ? "Ativo" : "Bloqueado"}</Td>
 
                     <Td>
-                      <HStack>
-                        <Button colorScheme="green">Desbloquear aluno</Button>
-                      </HStack>
+                      {!user.enabled ? (
+                        <Button
+                          colorScheme="green"
+                          onClick={() => enableUser(user.id)}
+                        >
+                          Desbloquear aluno
+                        </Button>
+                      ) : null}
                     </Td>
                   </Tr>
                 ))}
