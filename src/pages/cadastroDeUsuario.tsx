@@ -106,12 +106,18 @@ export default function CadastrarUsuario() {
         setIsEditing(false);
         clearInputs();
         if (isEditing) {
+          console.log({ data });
           // Atualizar a lista de usuario com o usuario editado
-          const updatedUsers = users.map((user) =>
-            user.id === id ? data.user : users
-          );
 
-          setUsers(updatedUsers);
+          setUsers((currentUsers) => {
+            const editedUsers = currentUsers.map((user) => {
+              if (user.id !== data.user.id) return user;
+
+              return data.user;
+            });
+
+            return [...editedUsers];
+          });
         } else {
           // Adicionar novo usuário à lista
           setUsers([data.user, ...users]);

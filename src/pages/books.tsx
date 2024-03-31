@@ -137,17 +137,26 @@ export default function Books() {
         clearInputs();
         if (isEditing) {
           // Atualizar a lista de livros com o livro editado
-          const updatedBooks = books.map((book) =>
-            book.id === id ? data.book : book
-          );
 
-          setBooks(updatedBooks);
+          setBooks((currentBooks) => {
+            const editedBooks = currentBooks.map((book) => {
+              if (book.id !== data.book.id) return book;
 
-          const updatedFilteredBooks = filteredBooks
-            ?.map((book) => (book.id === id ? data.book : book))
-            ?.filter((book) => book.status === selectedFilter);
+              return data.book;
+            });
 
-          setFilteredBooks(updatedFilteredBooks);
+            return [...editedBooks];
+          });
+
+          setFilteredBooks((currentBooks) => {
+            const editedBooks = currentBooks.map((book) => {
+              if (book.id !== data.book.id) return book;
+
+              return data.book;
+            });
+
+            return [...editedBooks];
+          });
         } else {
           // Adicionar novo livro à lista
           setBooks([data.book, ...books]);
