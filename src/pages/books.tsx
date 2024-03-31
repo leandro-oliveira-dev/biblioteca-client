@@ -466,7 +466,7 @@ export default function Books() {
             <Button onClick={handleSaveBook} colorScheme="black" mr={3}>
               Salvar
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose}>Cancelar</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

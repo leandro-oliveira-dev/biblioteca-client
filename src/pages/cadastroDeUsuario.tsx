@@ -332,7 +332,7 @@ export default function CadastrarUsuario() {
             <Button onClick={handleSaveUsers} colorScheme="black" mr={3}>
               Salvar
             </Button>
-            <Button onClick={onClose}>Cancel</Button>
+            <Button onClick={onClose}>Cancelar</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

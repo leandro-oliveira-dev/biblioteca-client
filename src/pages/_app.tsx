@@ -2,16 +2,43 @@ import { Content } from "@/components/Content";
 import { AuthProvider } from "@/context/AuthProvider";
 import "@/styles/globals.css";
 
-import { Box, ChakraProvider } from "@chakra-ui/react";
+import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
 
 import type { AppProps } from "next/app";
 
+const theme = extendTheme({
+  config: {
+    initialColorMode: "dark",
+    useSystemColorMode: false,
+  },
+  styles: {
+    global: {
+      body: {
+        _dark: {
+          bg: "#333",
+          color: "white",
+        },
+        _light: {
+          bg: "#fff",
+          color: "black",
+        },
+      },
+      button: {
+        color: "#333",
+      },
+      option: {
+        color: "#333",
+      },
+    },
+  },
+});
+
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <AuthProvider>
         <Content>
-          <Box color={"#fff"} bg="#333" minHeight="100vh">
+          <Box minHeight="100vh">
             <Component {...pageProps} />
           </Box>
         </Content>

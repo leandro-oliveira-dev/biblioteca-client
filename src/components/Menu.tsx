@@ -1,4 +1,4 @@
-import { ChevronDownIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { Link } from "@chakra-ui/next-js";
 
 import {
@@ -8,6 +8,8 @@ import {
   Button,
   VStack,
   MenuItem,
+  useColorMode,
+  Box,
 } from "@chakra-ui/react";
 import { Profile } from "./Profile";
 import { useAuth } from "@/context/AuthProvider";
@@ -19,7 +21,7 @@ interface IMenu {
 }
 
 const MENUS: IMenu[] = [
-  { url: "/", title: "Inicio" },
+  { url: "/inicio", title: "Inicio" },
   {
     url: "",
     title: "Usuários",
@@ -83,6 +85,7 @@ const MENUS: IMenu[] = [
 
 export function Menu() {
   const { logout } = useAuth();
+  const { colorMode, toggleColorMode } = useColorMode();
 
   return (
     <VStack
@@ -113,7 +116,7 @@ export function Menu() {
             <MenuList>
               {menu.subMenu?.map((submenu) => (
                 <Link href={submenu.url} key={submenu.url}>
-                  <MenuItem>{submenu.title}</MenuItem>
+                  <MenuItem color={"black"}>{submenu.title}</MenuItem>
                 </Link>
               ))}
             </MenuList>
@@ -125,6 +128,31 @@ export function Menu() {
         <MenuButton onClick={logout} minW={"100%"} as={Button}>
           Sair
         </MenuButton>
+      </ChakraMenu>
+      <ChakraMenu>
+        {colorMode === "light" ? (
+          <Box
+            py={1}
+            px={2}
+            rounded={8}
+            bg={"grey"}
+            cursor={"pointer"}
+            onClick={toggleColorMode}
+          >
+            <MoonIcon />
+          </Box>
+        ) : (
+          <Box
+            py={1}
+            px={2}
+            rounded={8}
+            bg={"grey"}
+            cursor={"pointer"}
+            onClick={toggleColorMode}
+          >
+            <SunIcon />
+          </Box>
+        )}
       </ChakraMenu>
     </VStack>
   );
