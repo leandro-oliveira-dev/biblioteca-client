@@ -8,9 +8,8 @@ import React, {
 import { useRouter } from "next/router";
 import { appStorage } from "@/lib/storage";
 import axios, { AxiosInstance } from "axios";
-import { error } from "console";
 
-type IUser = {
+export type IUser = {
   token?: string;
   id: string;
   name: string;
