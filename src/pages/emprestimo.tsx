@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 type Status = "avariado" | "disponivel" | "indisponivel" | "emprestado" | "all";
 import { Button as AppButton } from "@/components/ui/Button";
@@ -80,6 +80,22 @@ export default function Books() {
       .catch((error) => console.log(error));
   }, [currentPage, pageSize, api]);
 
+  const totalBorrowed = useCallback((book: IBooks) => {
+    console.log({
+      book,
+      total: book?.BorrowedBook?.filter(
+        (borrowedBook) => !Boolean(borrowedBook.returnAt)
+      ).length,
+      bookName: book.name,
+    });
+
+    return (
+      book?.BorrowedBook?.filter(
+        (borrowedBook) => !Boolean(borrowedBook.returnAt)
+      ).length || 0
+    );
+  }, []);
+
   function filterBooks(status: Status) {
     if (status === "all") {
       setFilteredBooks(books);
@@ -96,6 +112,8 @@ export default function Books() {
       .put(`/books/borrow/${bookId}`, { userId: userId, duration: 7 })
       .then((response) => {
         const currrentBookIndex = books.findIndex((book) => book.id === bookId);
+
+        console.log(response.data);
 
         setBooks((prevBooks) => {
           const updatedBooks = [...prevBooks];
@@ -237,11 +255,7 @@ export default function Books() {
                     </Td>
                     <Td>{book.author}</Td>
                     <Td>{book.qtd}</Td>
-                    <Td>
-                      {book?.BorrowedBook?.filter(
-                        (borrowedBook) => !Boolean(borrowedBook.returnAt)
-                      ).length || 0}
-                    </Td>
+                    <Td>{totalBorrowed(book)}</Td>
                     <Td>{book.position}</Td>
                     <Td>
                       <Badge colorScheme={BADGE_STATUS[book.status]}>

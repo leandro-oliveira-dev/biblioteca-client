@@ -30,10 +30,13 @@ interface IBorrowedBook {
     };
     name: string;
   };
+
+  book: IBook;
 }
 
 interface IBook {
   id: string;
+  code: string;
   name: string;
 }
 
@@ -51,20 +54,35 @@ export default function RelatorioEmprestar() {
   const [hasNextPage, setHasNextPage] = useState(false);
 
   useEffect(() => {
-    api
-      .get(
-        `/books/${router.query.book}/borrowed-report/?page=${currentPage}&pageSize=${pageSize}`
-      )
-      .then((response) => response.data)
-      .then((value) => {
-        setBorrowedBooks(value.borrowedBooks);
-        setBook(value.book);
-        setTotalItens(value.totalBooks);
-        setTotalPages(value.totalPages);
-        setHasPreviousPage(value.hasPreviousPage);
-        setHasNextPage(value.hasNextPage);
-      })
-      .catch((error) => console.log(error));
+    if (router.query.book) {
+      api
+        .get(
+          `/books/${router.query.book}/borrowed-report/?page=${currentPage}&pageSize=${pageSize}`
+        )
+        .then((response) => response.data)
+        .then((value) => {
+          setBorrowedBooks(value.borrowedBooks);
+          setBook(value.book);
+          setTotalItens(value.totalBooks);
+          setTotalPages(value.totalPages);
+          setHasPreviousPage(value.hasPreviousPage);
+          setHasNextPage(value.hasNextPage);
+        })
+        .catch((error) => console.log(error));
+    } else {
+      api
+        .get(`/books/borrowed-report/?page=${currentPage}&pageSize=${pageSize}`)
+        .then((response) => response.data)
+        .then((value) => {
+          setBorrowedBooks(value.borrowedBooks);
+          setBook(value.book);
+          setTotalItens(value.totalBooks);
+          setTotalPages(value.totalPages);
+          setHasPreviousPage(value.hasPreviousPage);
+          setHasNextPage(value.hasNextPage);
+        })
+        .catch((error) => console.log(error));
+    }
   }, [currentPage, pageSize, router, api]);
 
   const returnDaysLeft = useCallback((borrowedDate: Date) => {
@@ -89,7 +107,7 @@ export default function RelatorioEmprestar() {
       <Header title="Detalhes do Emprestimo"></Header>
 
       <VStack>
-        <Header title={book?.name as string}></Header>
+        <Header title={book?.name || ""}></Header>
 
         <VStack>
           <TableContainer>
@@ -97,9 +115,15 @@ export default function RelatorioEmprestar() {
               <Thead>
                 <Tr>
                   <Th>RA</Th>
-                  <Th>Nome</Th>
+                  <Th>Aluno</Th>
+                  {!router.query.book && (
+                    <>
+                      <Th>Code</Th>
+                      <Th>Livro</Th>
+                    </>
+                  )}
                   <Th>Data do emprestimo</Th>
-                  <Th>Dias do aluno com o Livro</Th>
+                  <Th>Dias emprestado</Th>
                   <Th>Status</Th>
                   <Th>Data da devolucao</Th>
                   <Th></Th>
@@ -110,6 +134,14 @@ export default function RelatorioEmprestar() {
                   <Tr key={borrowedBook.id}>
                     <Td>{borrowedBook.user.auth.ra}</Td>
                     <Td>{borrowedBook.user.name}</Td>
+
+                    {borrowedBook?.book?.name && (
+                      <>
+                        <Td>{borrowedBook.book.code}</Td>
+                        <Td>{borrowedBook.book.name}</Td>
+                      </>
+                    )}
+
                     <Td>
                       {new Date(borrowedBook.createdAt).toLocaleDateString(
                         "pt-BR"

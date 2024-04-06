@@ -99,7 +99,7 @@ export function Menu() {
     >
       <Profile />
       {MENUS.map((menu) => (
-        <ChakraMenu key={menu.url}>
+        <ChakraMenu key={menu.title}>
           {(menu.url && (
             <Link minW={"100%"} href={menu.url}>
               <MenuButton
@@ -124,10 +124,12 @@ export function Menu() {
               {menu.subMenu?.map((submenu) => (
                 <>
                   {(submenu.url && (
-                    <Link href={submenu.url} key={submenu.url}>
+                    <Link href={submenu.url} key={submenu.title}>
                       <MenuItem>{submenu.title}</MenuItem>
                     </Link>
-                  )) || <MenuItem>{submenu.title}</MenuItem>}
+                  )) || (
+                    <MenuItem key={submenu.title}>{submenu.title}</MenuItem>
+                  )}
                 </>
               ))}
             </MenuList>
