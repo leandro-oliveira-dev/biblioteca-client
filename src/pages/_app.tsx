@@ -6,12 +6,16 @@ import { Box, ChakraProvider, extendTheme } from "@chakra-ui/react";
 
 import type { AppProps } from "next/app";
 import { theme as customTheme } from "@/styles/theme";
+import Head from "next/head";
 
 const theme = extendTheme(customTheme);
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <ChakraProvider theme={theme}>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </Head>
       <AuthProvider>
         <Content>
           <Box minHeight="100vh">

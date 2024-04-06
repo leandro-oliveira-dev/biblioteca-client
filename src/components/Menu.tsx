@@ -15,7 +15,7 @@ import { Profile } from "./Profile";
 import { useAuth } from "@/context/AuthProvider";
 
 interface IMenu {
-  url: string;
+  url?: string;
   title: string;
   subMenu?: IMenu[];
 }
@@ -23,7 +23,6 @@ interface IMenu {
 const MENUS: IMenu[] = [
   { url: "/inicio", title: "Inicio" },
   {
-    url: "",
     title: "Usuários",
     subMenu: [
       {
@@ -34,7 +33,6 @@ const MENUS: IMenu[] = [
   },
 
   {
-    url: "",
     title: "Livros",
     subMenu: [
       {
@@ -53,7 +51,6 @@ const MENUS: IMenu[] = [
     ],
   },
   {
-    url: "",
     title: "Relatórios",
     subMenu: [
       {
@@ -103,7 +100,17 @@ export function Menu() {
       <Profile />
       {MENUS.map((menu) => (
         <ChakraMenu key={menu.url}>
-          <Link minW={"100%"} href={menu.url}>
+          {(menu.url && (
+            <Link minW={"100%"} href={menu.url}>
+              <MenuButton
+                minW={"100%"}
+                as={Button}
+                rightIcon={menu.subMenu && <ChevronDownIcon />}
+              >
+                {menu.title}
+              </MenuButton>
+            </Link>
+          )) || (
             <MenuButton
               minW={"100%"}
               as={Button}
@@ -111,13 +118,17 @@ export function Menu() {
             >
               {menu.title}
             </MenuButton>
-          </Link>
+          )}
           {menu?.subMenu && (
             <MenuList>
               {menu.subMenu?.map((submenu) => (
-                <Link href={submenu.url} key={submenu.url}>
-                  <MenuItem>{submenu.title}</MenuItem>
-                </Link>
+                <>
+                  {(submenu.url && (
+                    <Link href={submenu.url} key={submenu.url}>
+                      <MenuItem>{submenu.title}</MenuItem>
+                    </Link>
+                  )) || <MenuItem>{submenu.title}</MenuItem>}
+                </>
               ))}
             </MenuList>
           )}

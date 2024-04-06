@@ -60,8 +60,6 @@ export default function CadastrarUsuario() {
   const [password, setPassword] = useState("");
   const [ra, setRa] = useState("");
 
-  const { colorMode } = useColorMode();
-
   const [isEditing, setIsEditing] = useState(false);
 
   const [users, setUsers] = useState<IUsers[]>([]);

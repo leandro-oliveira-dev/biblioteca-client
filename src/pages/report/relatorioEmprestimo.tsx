@@ -71,6 +71,19 @@ export default function RelatorioEmprestar() {
     return differenceInDays(addDays(new Date(), 7), new Date(borrowedDate));
   }, []);
 
+  const delayed = useCallback((returnDaysLeft: number, returnedAt?: Date) => {
+    return returnDaysLeft > 7;
+  }, []);
+
+  function returnBorrowedBook(borrowedBookId: string) {
+    api
+      .put(`/books/borrow/${borrowedBookId}/return`)
+      .then(() => {
+        alert("devolvido");
+      })
+      .catch((error) => console.log(error));
+  }
+
   return (
     <Box as={"main"}>
       <Header title="Detalhes do Emprestimo"></Header>
@@ -104,9 +117,18 @@ export default function RelatorioEmprestar() {
                     </Td>
                     <Td>{returnDaysLeft(borrowedBook.createdAt)}</Td>
                     <Td>
-                      {(returnDaysLeft(borrowedBook.createdAt) > 7 && (
-                        <Badge colorScheme={"red"}> Atrasado</Badge>
-                      )) || <Badge colorScheme={"green"}>No prazo</Badge>}
+                      {borrowedBook.returnAt && (
+                        <Badge mr={1} colorScheme={"green"}>
+                          Devolvido
+                        </Badge>
+                      )}
+
+                      {(delayed(
+                        returnDaysLeft(borrowedBook.createdAt),
+                        borrowedBook.returnAt
+                      ) && <Badge colorScheme={"red"}> Atrasado</Badge>) || (
+                        <Badge colorScheme={"blue"}>No prazo</Badge>
+                      )}
                     </Td>
                     <Td>
                       {borrowedBook.returnAt
@@ -117,9 +139,14 @@ export default function RelatorioEmprestar() {
                     </Td>
                     <Td>
                       <HStack>
-                        <Button colorScheme="green">
-                          Marcar como devolvido
-                        </Button>
+                        {!Boolean(borrowedBook.returnAt) && (
+                          <Button
+                            onClick={() => returnBorrowedBook(borrowedBook.id)}
+                            colorScheme="green"
+                          >
+                            Marcar como devolvido
+                          </Button>
+                        )}
                       </HStack>
                     </Td>
                   </Tr>

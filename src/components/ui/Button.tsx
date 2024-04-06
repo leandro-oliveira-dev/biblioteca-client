@@ -21,7 +21,7 @@ export function Button({
   }
 
   return (
-    <ChakraButton bg={bg} color={color}>
+    <ChakraButton {...props} bg={bg} color={color}>
       {children}
     </ChakraButton>
   );

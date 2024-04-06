@@ -36,6 +36,7 @@ interface IBooks {
     {
       id: string;
       userId: string;
+      returnAt?: Date;
     }
   ];
 }
@@ -222,19 +223,25 @@ export default function Books() {
                   <Tr key={book.id}>
                     <Td>{book.code}</Td>
                     <Td>
-                      <Link
-                        style={{
-                          textDecoration: "underline",
-                        }}
-                        href={`/report/relatorioEmprestimo?book=${book.id}`}
-                      >
-                        {book.name}
-                      </Link>
-                      <ArrowRightIcon ml={"1rem"} />
+                      {(Boolean(book?.BorrowedBook.length) && (
+                        <Link
+                          style={{
+                            textDecoration: "underline",
+                          }}
+                          href={`/report/relatorioEmprestimo?book=${book.id}`}
+                        >
+                          {book.name}
+                        </Link>
+                      )) ||
+                        book.name}
                     </Td>
                     <Td>{book.author}</Td>
                     <Td>{book.qtd}</Td>
-                    <Td>{book?.BorrowedBook?.length || 0}</Td>
+                    <Td>
+                      {book?.BorrowedBook?.filter(
+                        (borrowedBook) => !Boolean(borrowedBook.returnAt)
+                      ).length || 0}
+                    </Td>
                     <Td>{book.position}</Td>
                     <Td>
                       <Badge colorScheme={BADGE_STATUS[book.status]}>
@@ -246,15 +253,15 @@ export default function Books() {
                         {book.alreadyBorrowed ? (
                           <Text>Livro emprestado</Text>
                         ) : (
-                          <AppButton
+                          <Button
                             onClick={() =>
                               handleBorrowBook(book.id, String(user?.id))
                             }
-                            colorScheme="red"
+                            colorScheme="blue"
                             disabled={book.status !== "disponivel"}
                           >
                             Emprestar
-                          </AppButton>
+                          </Button>
                         )}
                       </HStack>
                     </Td>
