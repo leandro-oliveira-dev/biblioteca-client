@@ -22,6 +22,7 @@ import {
 import { Header } from "@/components/Header";
 import { CheckIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/context/AuthProvider";
+import { useRouter } from "next/router";
 
 interface IBooks {
   id: string;
@@ -52,6 +53,8 @@ const BADGE_STATUS = {
 export default function Books() {
   const [selectedFilter, setSelectedFilter] = useState<Status>("all");
 
+  const router = useRouter();
+
   const [books, setBooks] = useState<IBooks[]>([]);
   const [filteredBooks, setFilteredBooks] = useState<IBooks[]>([]);
 
@@ -66,8 +69,14 @@ export default function Books() {
   const { user, api } = useAuth();
 
   useEffect(() => {
+    const { status } = router.query;
+
+    const url = status
+      ? `/books/list?status=${status}&page=${currentPage}&pageSize=${pageSize}`
+      : `/books/list?&page=${currentPage}&pageSize=${pageSize}`;
+
     api
-      .get(`/books/list?page=${currentPage}&pageSize=${pageSize}`)
+      .get(url)
       .then((response) => response.data)
       .then((value) => {
         setBooks(value.books);
@@ -78,17 +87,9 @@ export default function Books() {
         setHasNextPage(value.hasNextPage);
       })
       .catch((error) => console.log(error));
-  }, [currentPage, pageSize, api]);
+  }, [currentPage, pageSize, api, router]);
 
   const totalBorrowed = useCallback((book: IBooks) => {
-    console.log({
-      book,
-      total: book?.BorrowedBook?.filter(
-        (borrowedBook) => !Boolean(borrowedBook.returnAt)
-      ).length,
-      bookName: book.name,
-    });
-
     return (
       book?.BorrowedBook?.filter(
         (borrowedBook) => !Boolean(borrowedBook.returnAt)
@@ -98,13 +99,17 @@ export default function Books() {
 
   function filterBooks(status: Status) {
     if (status === "all") {
-      setFilteredBooks(books);
+      router.push({
+        pathname: router.pathname,
+      });
+
       return;
     }
-    setFilteredBooks(books);
-    setFilteredBooks((prevBooks) =>
-      prevBooks?.filter((book) => book.status === status)
-    );
+
+    router.push({
+      pathname: router.pathname,
+      query: { status },
+    });
   }
 
   const handleBorrowBook = (bookId: string, userId: string) => {
@@ -112,8 +117,6 @@ export default function Books() {
       .put(`/books/borrow/${bookId}`, { userId: userId, duration: 7 })
       .then((response) => {
         const currrentBookIndex = books.findIndex((book) => book.id === bookId);
-
-        console.log(response.data);
 
         setBooks((prevBooks) => {
           const updatedBooks = [...prevBooks];

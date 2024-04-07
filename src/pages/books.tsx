@@ -47,6 +47,7 @@ import { Header } from "@/components/Header";
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
 import { CheckIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/context/AuthProvider";
+import { useRouter } from "next/router";
 
 const DEFAULT_STATUS = "disponivel";
 
@@ -62,8 +63,7 @@ export default function Books() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { api } = useAuth();
 
-  const bg = useColorModeValue("red.500", "red.500");
-  const color = useColorModeValue("white", "white");
+  const router = useRouter();
 
   const [id, setId] = useState<string | null>(null);
   const [name, setName] = useState("");
@@ -85,15 +85,21 @@ export default function Books() {
   const initialRef = useRef(null);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [totalItens, setTotalItens] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
 
   useEffect(() => {
+    const { status } = router.query;
+
+    const url = status
+      ? `/books/list?status=${status}&page=${currentPage}&pageSize=${pageSize}`
+      : `/books/list?&page=${currentPage}&pageSize=${pageSize}`;
+
     api
-      .get(`/books/list?page=${currentPage}&pageSize=${pageSize}`)
+      .get(url)
       .then((response) => response.data)
       .then((value) => {
         setBooks(value.books);
@@ -104,20 +110,21 @@ export default function Books() {
         setHasNextPage(value.hasNextPage);
       })
       .catch((error) => console.log(error));
-  }, [currentPage, pageSize, api]);
+  }, [currentPage, pageSize, api, router, selectedFilter]);
 
   function filterBooks(status: Status) {
     if (status === "all") {
-      setFilteredBooks(books);
+      router.push({
+        pathname: router.pathname,
+      });
 
       return;
     }
 
-    setFilteredBooks(books);
-
-    setFilteredBooks((prevBooks) =>
-      prevBooks?.filter((book) => book.status === status)
-    );
+    router.push({
+      pathname: router.pathname,
+      query: { status },
+    });
   }
 
   function handleSaveBook() {
@@ -239,7 +246,6 @@ export default function Books() {
               <Button
                 onClick={() => {
                   filterBooks("disponivel");
-                  setSelectedFilter("disponivel");
                 }}
                 size={"xs"}
                 colorScheme={BADGE_STATUS["disponivel"]}
@@ -250,7 +256,6 @@ export default function Books() {
               <Button
                 onClick={() => {
                   filterBooks("emprestado");
-                  setSelectedFilter("emprestado");
                 }}
                 size={"xs"}
                 colorScheme={BADGE_STATUS["emprestado"]}
@@ -261,7 +266,6 @@ export default function Books() {
               <Button
                 onClick={() => {
                   filterBooks("avariado");
-                  setSelectedFilter("avariado");
                 }}
                 size={"xs"}
                 colorScheme={BADGE_STATUS["avariado"]}
@@ -272,7 +276,6 @@ export default function Books() {
               <Button
                 onClick={() => {
                   filterBooks("indisponivel");
-                  setSelectedFilter("indisponivel");
                 }}
                 size={"xs"}
                 colorScheme={BADGE_STATUS["indisponivel"]}
@@ -283,7 +286,6 @@ export default function Books() {
               <Button
                 onClick={() => {
                   filterBooks("all");
-                  setSelectedFilter("all");
                 }}
                 size={"xs"}
                 colorScheme={BADGE_STATUS["all"]}
