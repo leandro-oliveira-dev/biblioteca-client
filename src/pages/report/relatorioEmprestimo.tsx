@@ -47,42 +47,29 @@ export default function RelatorioEmprestar() {
   const [book, setBook] = useState<IBook>();
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10);
   const [totalItens, setTotalItens] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
 
   useEffect(() => {
-    if (router.query.book) {
-      api
-        .get(
-          `/books/${router.query.book}/borrowed-report/?page=${currentPage}&pageSize=${pageSize}`
-        )
-        .then((response) => response.data)
-        .then((value) => {
-          setBorrowedBooks(value.borrowedBooks);
-          setBook(value.book);
-          setTotalItens(value.totalBooks);
-          setTotalPages(value.totalPages);
-          setHasPreviousPage(value.hasPreviousPage);
-          setHasNextPage(value.hasNextPage);
-        })
-        .catch((error) => console.log(error));
-    } else {
-      api
-        .get(`/books/borrowed-report/?page=${currentPage}&pageSize=${pageSize}`)
-        .then((response) => response.data)
-        .then((value) => {
-          setBorrowedBooks(value.borrowedBooks);
-          setBook(value.book);
-          setTotalItens(value.totalBooks);
-          setTotalPages(value.totalPages);
-          setHasPreviousPage(value.hasPreviousPage);
-          setHasNextPage(value.hasNextPage);
-        })
-        .catch((error) => console.log(error));
-    }
+    const url = router.query.book
+      ? `/books/${router.query.book}/borrowed-report/?page=${currentPage}&pageSize=${pageSize}`
+      : `/books/borrowed-report/?page=${currentPage}&pageSize=${pageSize}`;
+
+    api
+      .get(url)
+      .then((response) => response.data)
+      .then((value) => {
+        setBorrowedBooks(value.borrowedBooks);
+        setBook(value.book);
+        setTotalItens(value.totalBooks);
+        setTotalPages(value.totalPages);
+        setHasPreviousPage(value.hasPreviousPage);
+        setHasNextPage(value.hasNextPage);
+      })
+      .catch((error) => console.log(error));
   }, [currentPage, pageSize, router, api]);
 
   const returnDaysLeft = useCallback((borrowedDate: Date) => {
