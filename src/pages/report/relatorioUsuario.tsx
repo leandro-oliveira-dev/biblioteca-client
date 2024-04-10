@@ -133,6 +133,7 @@ export default function RelatorioEmprestar() {
               </Tbody>
             </Table>
           </TableContainer>
+
           <Box width={"100%"}>
             <HStack justifyContent={"space-between"}>
               <span>
