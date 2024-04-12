@@ -2,6 +2,7 @@
 import { Header } from "@/components/Header";
 import { useState, useEffect } from "react";
 import { differenceInDays } from "date-fns";
+import CsvDownloadButton from "react-json-to-csv";
 
 import {
   Button,
@@ -133,7 +134,16 @@ export default function RelatorioEmprestar() {
               </Tbody>
             </Table>
           </TableContainer>
-
+          <CsvDownloadButton
+            data={[
+              { id: "oioioi", name: "ioio", email: "oi@gmail" },
+              { id: "oioioi", name: "ioio", email: "oi@gmail" },
+              { id: "oioioi", name: "ioio", email: "oi@gmail" },
+              { id: "oioioi", name: "ioio", email: "oi@gmail" },
+            ]}
+            headers={["id", "nome", "email"]}
+            filename="user"
+          />
           <Box width={"100%"}>
             <HStack justifyContent={"space-between"}>
               <span>
