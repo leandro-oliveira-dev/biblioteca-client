@@ -1,8 +1,7 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import { Header } from "@/components/Header";
 import { useState, useEffect } from "react";
 import { differenceInDays } from "date-fns";
-import CsvDownloadButton from "react-json-to-csv";
+import CsvDownloadButton from "react-json-to-csv"; // Importando o componente para download CSV
 
 import {
   Button,
@@ -35,7 +34,7 @@ export default function RelatorioEmprestar() {
   const router = useRouter();
   const toast = useToast();
 
-  const [users, setUsers] = useState<IUser[]>();
+  const [users, setUsers] = useState<IUser[]>([]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
@@ -96,7 +95,6 @@ export default function RelatorioEmprestar() {
                   <Th>Data de criação</Th>
                   <Th>Dias do aluno no sistema</Th>
                   <Th>Status</Th>
-
                   <Th></Th>
                 </Tr>
               </Thead>
@@ -118,7 +116,6 @@ export default function RelatorioEmprestar() {
                         <Badge colorScheme={"red"}>Bloqueado</Badge>
                       )}
                     </Td>
-
                     <Td>
                       {!user.enabled ? (
                         <Button
@@ -134,16 +131,22 @@ export default function RelatorioEmprestar() {
               </Tbody>
             </Table>
           </TableContainer>
-          <CsvDownloadButton
-            data={[
-              { id: "oioioi", name: "ioio", email: "oi@gmail" },
-              { id: "oioioi", name: "ioio", email: "oi@gmail" },
-              { id: "oioioi", name: "ioio", email: "oi@gmail" },
-              { id: "oioioi", name: "ioio", email: "oi@gmail" },
-            ]}
-            headers={["id", "nome", "email"]}
-            filename="user"
+
+          {/* Adicionando o botão de download CSV */}
+          <CsvDownloadButton // Componente para download CSV
+            data={users} // Dados a serem convertidos em CSV
+            filename="usuarios" // Nome do arquivo CSV
+            headers={[
+              "id",
+              "name",
+              "isAdmin",
+              "enabled",
+              "created_at",
+              "auth.ra",
+            ]} // Headers do CSV correspondentes aos campos do objeto IUser
           />
+
+          {/* Paginação */}
           <Box width={"100%"}>
             <HStack justifyContent={"space-between"}>
               <span>

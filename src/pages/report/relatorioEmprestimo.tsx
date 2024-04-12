@@ -1,5 +1,6 @@
 import { Header } from "@/components/Header";
 import { useState, useEffect, useCallback } from "react";
+import CsvDownloadButton from "react-json-to-csv";
 
 import {
   Button,
@@ -173,6 +174,18 @@ export default function RelatorioEmprestar() {
               </Tbody>
             </Table>
           </TableContainer>
+          <CsvDownloadButton // Componente para download CSV
+            data={borrowedBooks} // Dados a serem convertidos em CSV
+            filename="Emprestimos" // Nome do arquivo CSV
+            headers={[
+              "id",
+              "name",
+              "isAdmin",
+              "enabled",
+              "created_at",
+              "auth.ra",
+            ]} // Headers do CSV correspondentes aos campos do objeto IUser
+          />
           <Box width={"100%"}>
             <HStack justifyContent={"space-between"}>
               <span>
