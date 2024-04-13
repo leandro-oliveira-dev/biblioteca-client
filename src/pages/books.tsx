@@ -1,18 +1,5 @@
 import { SetStateAction, useEffect, useRef, useState } from "react";
 
-type Status = "avariado" | "disponivel" | "indisponivel" | "emprestado" | "all";
-
-interface IBooks {
-  id: string;
-  name: string;
-  author: string;
-  qtd: number;
-  position: string;
-  gender: string;
-  status: Status;
-  code: number;
-}
-
 import { Button as AppButton } from "@/components/ui/Button";
 
 import {
@@ -42,13 +29,31 @@ import {
   HStack,
   Flex,
   Badge,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import { Header } from "@/components/Header";
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
 import { CheckIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/context/AuthProvider";
 import { useRouter } from "next/router";
+
+type Status = "avariado" | "disponivel" | "indisponivel" | "emprestado" | "all";
+
+interface Shelf {
+  gender: string;
+  position: number;
+}
+
+interface IBook {
+  id: string;
+  name: string;
+  author: string;
+  qtd: number;
+  position: string;
+  gender: string;
+  status: Status;
+  code: number;
+  Shelf: Shelf[];
+}
 
 const DEFAULT_STATUS = "disponivel";
 
@@ -70,17 +75,19 @@ export default function Books() {
   const [name, setName] = useState("");
   const [code, setCode] = useState<number | undefined>(undefined);
   const [qtd, setQtd] = useState<number | undefined>(undefined);
-  const [position, setPosition] = useState("");
+  const [position, setPosition] = useState<Number | undefined>();
   const [author, setAuthor] = useState("");
   const [status, setStatus] = useState(DEFAULT_STATUS);
   const [gender, setGender] = useState("");
+  const [searchedBook, setSearchedBook] = useState<IBook | undefined>();
+  const [showInputs, setShowInputs] = useState(false);
 
   const [selectedFilter, setSelectedFilter] = useState<Status>("all");
 
   const [isEditing, setIsEditing] = useState(false);
 
-  const [books, setBooks] = useState<IBooks[]>([]);
-  const [filteredBooks, setFilteredBooks] = useState<IBooks[]>([]);
+  const [books, setBooks] = useState<IBook[]>([]);
+  const [filteredBooks, setFilteredBooks] = useState<IBook[]>([]);
 
   const toast = useToast();
 
@@ -204,20 +211,23 @@ export default function Books() {
       });
   }
 
-  function createBookState(book: IBooks) {
+  function createBookState(book: IBook) {
     setId(book.id);
 
     setAuthor(book.author);
     setName(book.name);
     setCode(book.code);
     setQtd(book.qtd);
-    setPosition(book.position);
-    setGender(book.gender);
+
+    setPosition(book.Shelf.length > 0 ? book.Shelf[0].position : undefined);
+
+    setGender(book.Shelf.length > 0 ? book.Shelf[0].gender : "");
     setStatus(DEFAULT_STATUS);
   }
 
-  function startEditing(book: IBooks) {
+  function startEditing(book: IBook) {
     setIsEditing(true);
+    setShowInputs(true);
 
     createBookState(book);
 
@@ -229,10 +239,28 @@ export default function Books() {
     setName("");
     setCode(undefined);
     setQtd(undefined);
-    setPosition("");
+    setPosition(undefined);
     setGender("");
     setStatus(DEFAULT_STATUS);
     setIsEditing(false);
+    setShowInputs(false);
+    setSearchedBook(undefined);
+  }
+
+  function searchBook(code: number) {
+    api
+      .get(`/books/code/${code}`)
+      .then((response) => {
+        setSearchedBook(response.data);
+
+        if (response.data) {
+          setAuthor(response.data.author);
+          setName(response.data.name);
+        }
+
+        setShowInputs(true);
+      })
+      .catch((error) => console.log(error));
   }
 
   return (
@@ -309,13 +337,16 @@ export default function Books() {
           <TableContainer>
             <Table borderRadius={4} variant="simple">
               <Thead>
-                <Th>Código</Th>
-                <Th>Título</Th>
-                <Th>Autor</Th>
-                <Th>Quantidade</Th>
-                <Th>Prateleira</Th>
-                <Th>Gênero</Th>
-                <Th>Status</Th>
+                <Tr>
+                  <Th>Código</Th>
+                  <Th>Título</Th>
+                  <Th>Autor</Th>
+                  <Th>Quantidade</Th>
+                  <Th>Prateleira</Th>
+                  <Th>Gênero</Th>
+                  <Th>Status</Th>
+                  <Th></Th>
+                </Tr>
               </Thead>
               <Tbody>
                 {filteredBooks?.map((book) => (
@@ -324,7 +355,10 @@ export default function Books() {
                     <Td>{book.name}</Td>
                     <Td>{book.author}</Td>
                     <Td>{book.qtd}</Td>
-                    <Td>{book.position}</Td>
+                    <Td>
+                      {book.Shelf.length > 0 ? book.Shelf[0].position : ""}
+                    </Td>
+                    <Td>{book.Shelf.length > 0 ? book.Shelf[0].gender : ""}</Td>
                     <Td>
                       <Badge colorScheme={BADGE_STATUS[book.status]}>
                         {book.status}
@@ -390,105 +424,125 @@ export default function Books() {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
-            <FormControl>
-              <FormLabel>Codigo</FormLabel>
-              <Input
-                type="number"
-                onChange={(event: {
-                  target: { value: SetStateAction<string> };
-                }) => setCode(Number(event.target.value))}
-                defaultValue={Number(code)}
-                ref={initialRef}
-                placeholder="Codigo"
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Titulo</FormLabel>
-              <Input
-                onChange={(event: {
-                  target: { value: SetStateAction<string> };
-                }) => setName(event.target.value)}
-                defaultValue={name}
-                placeholder="Titulo"
-              />
-            </FormControl>
+            <VStack alignItems={"start"}>
+              <FormControl>
+                <FormLabel>Codigo</FormLabel>
+                <Input
+                  type="number"
+                  onChange={(event: {
+                    target: { value: SetStateAction<string> };
+                  }) => setCode(Number(event.target.value))}
+                  defaultValue={Number(code)}
+                  ref={initialRef}
+                  placeholder="Codigo"
+                />
+              </FormControl>
+              {code && !showInputs && (
+                <Button colorScheme="blue" onClick={() => searchBook(code)}>
+                  Buscar
+                </Button>
+              )}
+            </VStack>
 
-            <FormControl mt={4}>
-              <FormLabel>Autor</FormLabel>
-              <Input
-                onChange={(event: {
-                  target: { value: SetStateAction<string> };
-                }) => setAuthor(event.target.value)}
-                defaultValue={author}
-                placeholder="Autor"
-              />
-            </FormControl>
+            {(showInputs && (
+              <>
+                <FormControl mt={4}>
+                  <FormLabel>Titulo</FormLabel>
+                  <Input
+                    disabled={Boolean(searchedBook)}
+                    onChange={(event: {
+                      target: { value: SetStateAction<string> };
+                    }) => setName(event.target.value)}
+                    defaultValue={name}
+                    placeholder="Titulo"
+                  />
+                </FormControl>
 
-            <FormControl mt={4}>
-              <FormLabel>Quantidade</FormLabel>
-              <Input
-                onChange={(event: {
-                  target: { value: SetStateAction<string> };
-                }) => setQtd(Number(event.target.value))}
-                defaultValue={Number(qtd)}
-                type="number"
-                placeholder="Quantidade"
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Pratileira</FormLabel>
-              <Input
-                onChange={(event: {
-                  target: { value: SetStateAction<string> };
-                }) => setPosition(event.target.value)}
-                defaultValue={position}
-                type="text"
-                placeholder="Posicao"
-              />
-            </FormControl>
-            <FormControl mt={4}>
-              <FormLabel>Gênero</FormLabel>
-              <Input
-                onChange={(event: {
-                  target: { value: SetStateAction<string> };
-                }) => setPosition(event.target.value)}
-                defaultValue={gender}
-                type="text"
-                placeholder="Gênero"
-              />
-            </FormControl>
+                <FormControl mt={4}>
+                  <FormLabel>Autor</FormLabel>
+                  <Input
+                    disabled={Boolean(searchedBook)}
+                    onChange={(event: {
+                      target: { value: SetStateAction<string> };
+                    }) => setAuthor(event.target.value)}
+                    defaultValue={author}
+                    placeholder="Autor"
+                  />
+                </FormControl>
 
-            <FormControl mt={4}>
-              <FormLabel>Status</FormLabel>
-              <Select
-                color={"grey"}
-                placeholder="Escolher"
-                defaultValue={status}
-                onChange={(event: {
-                  target: { value: SetStateAction<string> };
-                }) => setStatus(event.target.value)}
-              >
-                <option className="text-black" value="avariado">
-                  AVARIADO
-                </option>
-                <option className="text-black" value="disponivel">
-                  DISPONIVEL
-                </option>
-                <option className="text-black" value="indisponivel">
-                  INDISPONIVEL
-                </option>
-                <option className="text-black" value="emprestado">
-                  EMPRESTADO
-                </option>
-              </Select>
-            </FormControl>
+                <FormControl mt={4}>
+                  <FormLabel>Quantidade</FormLabel>
+                  <Input
+                    onChange={(event: {
+                      target: { value: SetStateAction<string> };
+                    }) => setQtd(Number(event.target.value))}
+                    defaultValue={Number(qtd)}
+                    type="number"
+                    placeholder="Quantidade"
+                  />
+                </FormControl>
+                <FormControl mt={4}>
+                  <FormLabel>Pratileira</FormLabel>
+                  <Input
+                    onChange={(event: {
+                      target: { value: SetStateAction<string> };
+                    }) => setPosition(Number(event.target.value))}
+                    defaultValue={String(position)}
+                    type="number"
+                    placeholder="Posicao"
+                  />
+                </FormControl>
+                <FormControl mt={4}>
+                  <FormLabel>Gênero</FormLabel>
+                  <Input
+                    disabled={Boolean(searchedBook)}
+                    onChange={(event: {
+                      target: { value: SetStateAction<string> };
+                    }) => setGender(event.target.value)}
+                    defaultValue={gender}
+                    type="text"
+                    placeholder="Gênero"
+                  />
+                </FormControl>
+
+                <FormControl mt={4}>
+                  <FormLabel>Status</FormLabel>
+                  <Select
+                    color={"grey"}
+                    placeholder="Escolher"
+                    defaultValue={status}
+                    onChange={(event: {
+                      target: { value: SetStateAction<string> };
+                    }) => setStatus(event.target.value)}
+                  >
+                    <option className="text-black" value="avariado">
+                      AVARIADO
+                    </option>
+                    <option className="text-black" value="disponivel">
+                      DISPONIVEL
+                    </option>
+                    <option className="text-black" value="indisponivel">
+                      INDISPONIVEL
+                    </option>
+                    <option className="text-black" value="emprestado">
+                      EMPRESTADO
+                    </option>
+                  </Select>
+                </FormControl>
+              </>
+            )) ||
+              null}
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={handleSaveBook} colorScheme="black" mr={3}>
-              Salvar
-            </Button>
-            <Button onClick={onClose}>Cancelar</Button>
+            {showInputs && (
+              <>
+                <Button onClick={handleSaveBook} colorScheme="orange" mr={3}>
+                  Salvar
+                </Button>
+                <Button onClick={onClose}>Cancelar</Button>
+              </>
+            )}
           </ModalFooter>
         </ModalContent>
       </Modal>
