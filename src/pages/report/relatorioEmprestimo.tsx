@@ -174,16 +174,36 @@ export default function RelatorioEmprestar() {
               </Tbody>
             </Table>
           </TableContainer>
+
           <CsvDownloadButton // Componente para download CSV
-            data={borrowedBooks} // Dados a serem convertidos em CSV
+            data={borrowedBooks.map((borrowedBook) => ({
+              ra: borrowedBook.user?.auth?.ra || "",
+              aluno: borrowedBook.user.name,
+              code: borrowedBook.book.code,
+              livro: borrowedBook.book.name,
+              data_emprestimo: borrowedBook.createdAt,
+              dias_emprestado: returnDaysLeft(borrowedBook.createdAt),
+              status:
+                (delayed(
+                  returnDaysLeft(borrowedBook.createdAt),
+                  borrowedBook.returnAt
+                ) &&
+                  "Atrasado") ||
+                "No Prazo",
+              data_devolucao: borrowedBook.returnAt
+                ? new Date(borrowedBook.returnAt).toLocaleDateString("pt-BR")
+                : "",
+            }))} // Dados a serem convertidos em CSV
             filename="Emprestimos" // Nome do arquivo CSV
             headers={[
-              "id",
-              "name",
-              "isAdmin",
-              "enabled",
-              "created_at",
-              "auth.ra",
+              "ra",
+              "aluno",
+              "code",
+              "livro",
+              "data_emprestimo",
+              "dias_emprestado",
+              "status",
+              "data_devolucao",
             ]} // Headers do CSV correspondentes aos campos do objeto IUser
           />
           <Box width={"100%"}>
