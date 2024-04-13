@@ -8,6 +8,7 @@ interface IBooks {
   author: string;
   qtd: number;
   position: string;
+  gender: string;
   status: Status;
   code: number;
 }
@@ -72,6 +73,7 @@ export default function Books() {
   const [position, setPosition] = useState("");
   const [author, setAuthor] = useState("");
   const [status, setStatus] = useState(DEFAULT_STATUS);
+  const [gender, setGender] = useState("");
 
   const [selectedFilter, setSelectedFilter] = useState<Status>("all");
 
@@ -135,6 +137,7 @@ export default function Books() {
       author,
       qtd,
       position,
+      gender,
       status,
     };
 
@@ -209,6 +212,7 @@ export default function Books() {
     setCode(book.code);
     setQtd(book.qtd);
     setPosition(book.position);
+    setGender(book.gender);
     setStatus(DEFAULT_STATUS);
   }
 
@@ -226,6 +230,7 @@ export default function Books() {
     setCode(undefined);
     setQtd(undefined);
     setPosition("");
+    setGender("");
     setStatus(DEFAULT_STATUS);
     setIsEditing(false);
   }
@@ -304,15 +309,13 @@ export default function Books() {
           <TableContainer>
             <Table borderRadius={4} variant="simple">
               <Thead>
-                <Tr>
-                  <Th>Codigo</Th>
-                  <Th>Titulo</Th>
-                  <Th>Autor</Th>
-                  <Th>Quantidade</Th>
-                  <Th>Posição</Th>
-                  <Th>Status</Th>
-                  <Th></Th>
-                </Tr>
+                <Th>Código</Th>
+                <Th>Título</Th>
+                <Th>Autor</Th>
+                <Th>Quantidade</Th>
+                <Th>Prateleira</Th>
+                <Th>Gênero</Th>
+                <Th>Status</Th>
               </Thead>
               <Tbody>
                 {filteredBooks?.map((book) => (
@@ -433,7 +436,7 @@ export default function Books() {
               />
             </FormControl>
             <FormControl mt={4}>
-              <FormLabel>Posicão</FormLabel>
+              <FormLabel>Pratileira</FormLabel>
               <Input
                 onChange={(event: {
                   target: { value: SetStateAction<string> };
@@ -441,6 +444,17 @@ export default function Books() {
                 defaultValue={position}
                 type="text"
                 placeholder="Posicao"
+              />
+            </FormControl>
+            <FormControl mt={4}>
+              <FormLabel>Gênero</FormLabel>
+              <Input
+                onChange={(event: {
+                  target: { value: SetStateAction<string> };
+                }) => setPosition(event.target.value)}
+                defaultValue={gender}
+                type="text"
+                placeholder="Gênero"
               />
             </FormControl>
 
