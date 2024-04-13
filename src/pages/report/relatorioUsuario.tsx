@@ -24,6 +24,7 @@ import { useAuth } from "@/context/AuthProvider";
 interface IUser {
   id: string;
   name: string;
+  isAdmin: boolean;
   created_at: Date;
   enabled: boolean;
   auth: { ra: string };
@@ -134,16 +135,15 @@ export default function RelatorioEmprestar() {
 
           {/* Adicionando o botão de download CSV */}
           <CsvDownloadButton // Componente para download CSV
-            data={users} // Dados a serem convertidos em CSV
+            data={users.map((user) => ({
+              ra: user?.auth?.ra || "",
+              name: user.name,
+              admin: user.isAdmin,
+              enabled: user.enabled,
+              created_at: user.created_at,
+            }))} // Dados a serem convertidos em CSV
             filename="usuarios" // Nome do arquivo CSV
-            headers={[
-              "id",
-              "name",
-              "isAdmin",
-              "enabled",
-              "created_at",
-              "auth.ra",
-            ]} // Headers do CSV correspondentes aos campos do objeto IUser
+            headers={["ra", "name", "admin", "enabled", "created_at"]} // Headers do CSV correspondentes aos campos do objeto IUser
           />
 
           {/* Paginação */}
