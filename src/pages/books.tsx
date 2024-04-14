@@ -32,7 +32,7 @@ import {
 } from "@chakra-ui/react";
 import { Header } from "@/components/Header";
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
-import { CheckIcon } from "@chakra-ui/icons";
+import { CheckIcon, SearchIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/context/AuthProvider";
 import { useRouter } from "next/router";
 
@@ -275,7 +275,7 @@ export default function Books() {
             mt={8}
             width={"100%"}
           >
-            <HStack>
+            <HStack gap={2}>
               <Button
                 onClick={() => {
                   filterBooks("disponivel");
@@ -327,9 +327,10 @@ export default function Books() {
                 Todos
               </Button>
             </HStack>
-            <Flex>
-              <Button onClick={onOpen} colorScheme="blue">
-                Cadastrar
+            <Flex maxW={"300px"} gap={2} as={FormControl}>
+              <Input placeholder="Buscar..." />
+              <Button colorScheme="blue">
+                <SearchIcon />
               </Button>
             </Flex>
           </HStack>
@@ -345,7 +346,13 @@ export default function Books() {
                   <Th>Prateleira</Th>
                   <Th>Gênero</Th>
                   <Th>Status</Th>
-                  <Th></Th>
+                  <Th>
+                    <Flex width={"100%"} justifyContent={"flex-end"}>
+                      <Button size={"sm"} onClick={onOpen} colorScheme="blue">
+                        Cadastrar
+                      </Button>
+                    </Flex>
+                  </Th>
                 </Tr>
               </Thead>
               <Tbody>

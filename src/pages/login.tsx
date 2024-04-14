@@ -1,5 +1,4 @@
-import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   Text,
@@ -16,12 +15,20 @@ import { useAuth } from "@/context/AuthProvider";
 import Head from "next/head";
 
 export default function Login() {
-  const router = useRouter();
   const [error, setError] = useState("");
 
-  const [email, setEmail] = useState("admin@email.com");
-  const [ra, setRa] = useState("1111");
-  const [password, setPassword] = useState("1234");
+  const [email, setEmail] = useState("");
+  const [ra, setRa] = useState("");
+  const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === "development") {
+      setEmail("admin@email.com");
+      setRa("1111");
+      setPassword("1234");
+    }
+  }, []);
+
   const { login } = useAuth();
 
   const handleLogin = async () => {
