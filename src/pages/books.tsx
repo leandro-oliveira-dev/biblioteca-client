@@ -32,7 +32,7 @@ import {
 } from "@chakra-ui/react";
 import { Header } from "@/components/Header";
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
-import { CheckIcon, SearchIcon } from "@chakra-ui/icons";
+import { CheckIcon, SearchIcon, EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/context/AuthProvider";
 import { useRouter } from "next/router";
 
@@ -336,7 +336,7 @@ export default function Books() {
           </HStack>
 
           <TableContainer>
-            <Table borderRadius={4} variant="simple">
+            <Table borderRadius={4} size={"sm"}>
               <Thead>
                 <Tr>
                   <Th>Código</Th>
@@ -376,10 +376,13 @@ export default function Books() {
                         <Button
                           onClick={() => startEditing(book)}
                           colorScheme="green"
+                          size={"sm"}
                         >
-                          Editar
+                          <EditIcon />
                         </Button>
-                        <AppButton colorScheme={"red"}>Indisponivel</AppButton>
+                        <AppButton size={"sm"} colorScheme={"red"}>
+                          <DeleteIcon />
+                        </AppButton>
                       </HStack>
                     </Td>
                   </Tr>
