@@ -1,4 +1,5 @@
 import { SetStateAction, useEffect, useRef, useState } from "react";
+import CsvDownloadButton from "react-json-to-csv";
 
 import { Button as AppButton } from "@/components/ui/Button";
 
@@ -334,7 +335,6 @@ export default function Books() {
               </Button>
             </Flex>
           </HStack>
-
           <TableContainer>
             <Table borderRadius={4} size={"sm"}>
               <Thead>
@@ -390,6 +390,28 @@ export default function Books() {
               </Tbody>
             </Table>
           </TableContainer>
+          <CsvDownloadButton // Componente para download CSV
+            data={books.map((book) => ({
+              code: book.code,
+              name: book.name,
+              author: book.author,
+              qtd: book.qtd,
+              position: book.position,
+              gender: book.gender,
+              status: book.status,
+            }))} // Dados a serem convertidos em CSV
+            filename="Livros" // Nome do arquivo CSV
+            headers={[
+              "Código",
+              "Nome",
+              "Autor",
+              "Quantidade",
+              "Posição",
+              "Gênero",
+              "Status",
+            ]} // Headers do CSV correspondentes aos campos do objeto IUser
+          />
+          .
           <Box width={"100%"}>
             <HStack justifyContent={"space-between"}>
               <span>
@@ -497,7 +519,11 @@ export default function Books() {
                     onChange={(event: {
                       target: { value: SetStateAction<string> };
                     }) => setPosition(Number(event.target.value))}
-                    defaultValue={String(position)}
+                    defaultValue={
+                      position !== undefined && searchedBook
+                        ? String(searchedBook.position)
+                        : ""
+                    }
                     type="number"
                     placeholder="Posicao"
                   />
