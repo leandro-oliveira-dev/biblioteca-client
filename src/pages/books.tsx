@@ -30,6 +30,7 @@ import {
   HStack,
   Flex,
   Badge,
+  Center,
 } from "@chakra-ui/react";
 import { Header } from "@/components/Header";
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
@@ -49,7 +50,7 @@ interface IBook {
   name: string;
   author: string;
   qtd: number;
-  position: string;
+  position: number;
   gender: string;
   status: Status;
   code: number;
@@ -100,6 +101,8 @@ export default function Books() {
   const [totalPages, setTotalPages] = useState(0);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
+
+  const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
     const { status } = router.query;
@@ -264,6 +267,23 @@ export default function Books() {
       .catch((error) => console.log(error));
   }
 
+  function searchAllBooks(value: string) {
+    api
+      .get<{ books: IBook[] }>("/books/all") // Adicione a tipagem para a resposta da API
+      .then((response) => {
+        const allBooks = response.data.books;
+
+        // Filtra os livros com base no valor de pesquisa
+        const filteredBooks = allBooks.filter((book: IBook) =>
+          book.name.toLowerCase().includes(value.toLowerCase())
+        );
+
+        // Define os livros filtrados para exibição na tabela
+        setFilteredBooks(filteredBooks);
+      })
+      .catch((error) => console.log(error));
+  }
+
   return (
     <Box as={"main"}>
       <VStack>
@@ -329,7 +349,11 @@ export default function Books() {
               </Button>
             </HStack>
             <Flex maxW={"300px"} gap={2} as={FormControl}>
-              <Input placeholder="Buscar..." />
+              <Input
+                placeholder="Buscar..."
+                value={searchValue} // Utiliza o valor de pesquisa como o valor do campo de entrada
+                onChange={(e) => searchAllBooks(e.target.value)} // Chama a função de pesquisa ao alterar o campo de entrada
+              />
               <Button colorScheme="blue">
                 <SearchIcon />
               </Button>
@@ -363,9 +387,15 @@ export default function Books() {
                     <Td>{book.author}</Td>
                     <Td>{book.qtd}</Td>
                     <Td>
-                      {book.Shelf.length > 0 ? book.Shelf[0].position : ""}
+                      {book.Shelf && book.Shelf.length > 0
+                        ? book.Shelf[0].position
+                        : ""}
                     </Td>
-                    <Td>{book.Shelf.length > 0 ? book.Shelf[0].gender : ""}</Td>
+                    <Td>
+                      {book.Shelf && book.Shelf.length > 0
+                        ? book.Shelf[0].gender
+                        : ""}
+                    </Td>
                     <Td>
                       <Badge colorScheme={BADGE_STATUS[book.status]}>
                         {book.status}
@@ -390,28 +420,7 @@ export default function Books() {
               </Tbody>
             </Table>
           </TableContainer>
-          <CsvDownloadButton // Componente para download CSV
-            data={books.map((book) => ({
-              code: book.code,
-              name: book.name,
-              author: book.author,
-              qtd: book.qtd,
-              position: book.position,
-              gender: book.gender,
-              status: book.status,
-            }))} // Dados a serem convertidos em CSV
-            filename="Livros" // Nome do arquivo CSV
-            headers={[
-              "Código",
-              "Nome",
-              "Autor",
-              "Quantidade",
-              "Posição",
-              "Gênero",
-              "Status",
-            ]} // Headers do CSV correspondentes aos campos do objeto IUser
-          />
-          .
+
           <Box width={"100%"}>
             <HStack justifyContent={"space-between"}>
               <span>
@@ -419,7 +428,7 @@ export default function Books() {
               </span>
               <span> {totalItens} Total de Livros</span>
             </HStack>
-            <HStack>
+            <HStack justifyContent={"space-between"}>
               {hasPreviousPage && (
                 <Button
                   colorScheme="blue"
@@ -437,6 +446,30 @@ export default function Books() {
                 </Button>
               )}
             </HStack>
+            <Box display="grid" placeItems="center">
+              <CsvDownloadButton
+                // Componente para download CSV
+                data={books.map((book, Shelf) => ({
+                  code: book.code,
+                  name: book.name,
+                  author: book.author,
+                  qtd: book.qtd,
+                  position: book.position,
+                  gender: book.gender,
+                  status: book.status,
+                }))} // Dados a serem convertidos em CSV
+                filename="Livros" // Nome do arquivo CSV
+                headers={[
+                  "Código",
+                  "Nome",
+                  "Autor",
+                  "Quantidade",
+                  "Posição",
+                  "Gênero",
+                  "Status",
+                ]} // Headers do CSV correspondentes aos campos do objeto IUser
+              />
+            </Box>
           </Box>
         </VStack>
       </VStack>
