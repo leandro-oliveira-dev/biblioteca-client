@@ -351,7 +351,8 @@ export default function Books() {
             <Flex maxW={"300px"} gap={2} as={FormControl}>
               <Input
                 placeholder="Buscar..."
-                value={searchValue} // Utiliza o valor de pesquisa como o valor do campo de entrada
+                //value={searchValue} // Utiliza o valor de pesquisa como o valor do campo de entrada
+                defaultValue=""
                 onChange={(e) => searchAllBooks(e.target.value)} // Chama a função de pesquisa ao alterar o campo de entrada
               />
               <Button colorScheme="blue">
