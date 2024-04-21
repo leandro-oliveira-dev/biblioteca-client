@@ -269,7 +269,7 @@ export default function Books() {
 
   function searchAllBooks(value: string) {
     api
-      .get<{ books: IBook[] }>("/books/all") // Adicione a tipagem para a resposta da API
+      .get<{ books: IBook[] }>(`/books/all?name=${value}`) // Adicione a tipagem para a resposta da API
       .then((response) => {
         const allBooks = response.data.books;
 
