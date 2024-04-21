@@ -50,8 +50,7 @@ interface IBook {
   name: string;
   author: string;
   qtd: number;
-  position: number;
-  gender: string;
+
   status: Status;
   code: number;
   Shelf: Shelf[];
@@ -450,13 +449,13 @@ export default function Books() {
             <Box display="grid" placeItems="center">
               <CsvDownloadButton
                 // Componente para download CSV
-                data={books.map((book, Shelf) => ({
+                data={books.map((book) => ({
                   code: book.code,
                   name: book.name,
                   author: book.author,
                   qtd: book.qtd,
-                  position: book.position,
-                  gender: book.gender,
+                  position: book.Shelf[0]?.position,
+                  gender: book.Shelf[0]?.gender,
                   status: book.status,
                 }))} // Dados a serem convertidos em CSV
                 filename="Livros" // Nome do arquivo CSV
