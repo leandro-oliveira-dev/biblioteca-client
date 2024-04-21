@@ -101,14 +101,22 @@ export default function Books() {
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
 
-  const [searchValue, setSearchValue] = useState("");
+  const [searchBookString, setSearchBookString] = useState("");
 
   useEffect(() => {
-    const { status } = router.query;
+    const { status, name } = router.query;
 
-    const url = status
-      ? `/books/list?status=${status}&page=${currentPage}&pageSize=${pageSize}`
-      : `/books/list?&page=${currentPage}&pageSize=${pageSize}`;
+    if (name) {
+      setSearchBookString(String(name));
+    }
+
+    const statusQuery = status ? `&status=${status}` : "";
+    const nameQuery = name ? `&name=${name}` : "";
+
+    const url =
+      status || name
+        ? `/books/list?page=${currentPage}&pageSize=${pageSize}${statusQuery}${nameQuery}`
+        : `/books/list?page=${currentPage}&pageSize=${pageSize}`;
 
     api
       .get(url)
@@ -266,23 +274,6 @@ export default function Books() {
       .catch((error) => console.log(error));
   }
 
-  function searchAllBooks(value: string) {
-    api
-      .get<{ books: IBook[] }>(`/books/all?name=${value}`) // Adicione a tipagem para a resposta da API
-      .then((response) => {
-        const allBooks = response.data.books;
-
-        // Filtra os livros com base no valor de pesquisa
-        const filteredBooks = allBooks.filter((book: IBook) =>
-          book.name.toLowerCase().includes(value.toLowerCase())
-        );
-
-        // Define os livros filtrados para exibição na tabela
-        setFilteredBooks(filteredBooks);
-      })
-      .catch((error) => console.log(error));
-  }
-
   return (
     <Box as={"main"}>
       <VStack>
@@ -351,10 +342,23 @@ export default function Books() {
               <Input
                 placeholder="Buscar..."
                 //value={searchValue} // Utiliza o valor de pesquisa como o valor do campo de entrada
-                defaultValue=""
-                onChange={(e) => searchAllBooks(e.target.value)} // Chama a função de pesquisa ao alterar o campo de entrada
+                defaultValue={searchBookString}
+                onChange={(e) =>
+                  router.push({
+                    pathname: router.pathname,
+                    query: { name: e.target.value },
+                  })
+                } // Chama a função de pesquisa ao alterar o campo de entrada
               />
-              <Button colorScheme="blue">
+              <Button
+                onClick={() =>
+                  router.push({
+                    pathname: router.pathname,
+                    query: { name: searchBookString },
+                  })
+                }
+                colorScheme="blue"
+              >
                 <SearchIcon />
               </Button>
             </Flex>
@@ -554,7 +558,7 @@ export default function Books() {
                     }) => setPosition(Number(event.target.value))}
                     defaultValue={
                       position !== undefined && searchedBook
-                        ? String(searchedBook.position)
+                        ? String(searchedBook.Shelf[0]?.position)
                         : ""
                     }
                     type="number"
