@@ -34,6 +34,8 @@ import {
 
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
 import { useAuth } from "@/context/AuthProvider";
+import { SearchIcon } from "@chakra-ui/icons";
+import router from "next/router";
 
 interface IAuth {
   email: string;
@@ -73,6 +75,7 @@ export default function CadastrarUsuario() {
   const [totalPages, setTotalPages] = useState(0);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
+  const [searchUserString, setSearchUserString] = useState("");
 
   useEffect(() => {
     api
@@ -198,6 +201,26 @@ export default function CadastrarUsuario() {
         });
       });
   }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get(`/users/all?name=${searchUserString}`);
+        const data = response.data;
+        setUsers(data.users);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [api, searchUserString]);
+
+  const handleSearch = () => {
+    router.push({
+      pathname: router.pathname,
+      query: { name: searchUserString },
+    });
+  };
+
   return (
     <Box as={"main"}>
       <VStack>
@@ -205,15 +228,26 @@ export default function CadastrarUsuario() {
 
         <VStack>
           <HStack
-            justifyContent={"space-between"}
+            justifyContent={"flex-end"}
             alignSelf={"flex-start"}
             mt={8}
             width={"100%"}
           >
             {" "}
-            <Flex justifyContent="flex-end" width="100%">
-              <Button onClick={onOpen} colorScheme="blue">
-                Cadastrar
+            <Flex maxW={"300px"} gap={2} as={FormControl}>
+              <Input
+                placeholder="Buscar..."
+                //value={searchValue} // Utiliza o valor de pesquisa como o valor do campo de entrada
+                defaultValue={searchUserString}
+                onChange={(e) =>
+                  router.push({
+                    pathname: router.pathname,
+                    query: { name: e.target.value },
+                  })
+                } // Chama a função de pesquisa ao alterar o campo de entrada
+              />
+              <Button onClick={handleSearch} colorScheme="blue">
+                <SearchIcon />
               </Button>
             </Flex>
           </HStack>
@@ -228,8 +262,14 @@ export default function CadastrarUsuario() {
                   <Th>RA</Th>
                   <Th>Admin</Th>
 
-                  <Th></Th>
-                  <Th></Th>
+                  <Th>
+                    {" "}
+                    <Flex justifyContent="flex-end" width="100%">
+                      <Button size={"sm"} onClick={onOpen} colorScheme="blue">
+                        Cadastrar
+                      </Button>
+                    </Flex>
+                  </Th>
                 </Tr>
               </Thead>
               <Tbody>
