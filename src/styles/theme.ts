@@ -3,7 +3,7 @@ type Dict<T = any> = Record<string, T>;
 export const theme = {
   config: {
     initialColorMode: "dark",
-    useSystemColorMode: false,
+    useSystemColorMode: true,
   },
 
   styles: {
