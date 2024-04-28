@@ -67,7 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const isLoginPage = router.pathname === "/login";
 
   const api = axios.create({
-    baseURL: "http://localhost:8000",
+    baseURL: process.env.API_URL || "http://localhost:8000",
   });
 
   const setupAuthHeader = useCallback(() => {
