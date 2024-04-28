@@ -78,8 +78,18 @@ export default function CadastrarUsuario() {
   const [searchUserString, setSearchUserString] = useState("");
 
   useEffect(() => {
+    const { name } = router.query;
+
+    if (name) {
+      setSearchUserString(String(name));
+    }
+
+    const nameQuery = name ? `&name=${name}` : "";
+
+    const url = `/users/list?page=${currentPage}&pageSize=${pageSize}${nameQuery}`;
+
     api
-      .get(`/users/list?page=${currentPage}&pageSize=${pageSize}`)
+      .get(url)
       .then((response) => response.data)
       .then((value) => {
         setUsers(value.users);
@@ -201,18 +211,6 @@ export default function CadastrarUsuario() {
         });
       });
   }
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get(`/users/all?name=${searchUserString}`);
-        const data = response.data;
-        setUsers(data.users);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchData();
-  }, [api, searchUserString]);
 
   const handleSearch = () => {
     router.push({
@@ -237,14 +235,13 @@ export default function CadastrarUsuario() {
             <Flex maxW={"300px"} gap={2} as={FormControl}>
               <Input
                 placeholder="Buscar..."
-                //value={searchValue} // Utiliza o valor de pesquisa como o valor do campo de entrada
                 defaultValue={searchUserString}
                 onChange={(e) =>
                   router.push({
                     pathname: router.pathname,
                     query: { name: e.target.value },
                   })
-                } // Chama a função de pesquisa ao alterar o campo de entrada
+                }
               />
               <Button onClick={handleSearch} colorScheme="blue">
                 <SearchIcon />
