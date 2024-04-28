@@ -52,7 +52,19 @@ export default function RelatorioEmprestar() {
   const [totalItens, setTotalItens] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
+
   const [hasNextPage, setHasNextPage] = useState(false);
+
+  const [csvData, setCsvData] = useState<IBorrowedBook[]>();
+
+  function prepareCsv() {
+    api
+      .get("/books/borrowed-report/csv-download")
+      .then((response) => {
+        setCsvData(response.data);
+      })
+      .catch((error) => console.log(error));
+  }
 
   useEffect(() => {
     const url = router.query.book
@@ -99,7 +111,7 @@ export default function RelatorioEmprestar() {
 
         <VStack>
           <TableContainer>
-            <Table borderRadius={4} variant="simple">
+            <Table size={"sm"} borderRadius={4} variant="simple">
               <Thead>
                 <Tr>
                   <Th>RA</Th>
@@ -175,37 +187,50 @@ export default function RelatorioEmprestar() {
             </Table>
           </TableContainer>
 
-          <CsvDownloadButton // Componente para download CSV
-            data={borrowedBooks.map((borrowedBook) => ({
-              ra: borrowedBook.user?.auth?.ra || "",
-              aluno: borrowedBook.user.name,
-              code: borrowedBook.book.code,
-              livro: borrowedBook.book.name,
-              data_emprestimo: borrowedBook.createdAt,
-              dias_emprestado: returnDaysLeft(borrowedBook.createdAt),
-              status:
-                (delayed(
-                  returnDaysLeft(borrowedBook.createdAt),
-                  borrowedBook.returnAt
-                ) &&
-                  "Atrasado") ||
-                "No Prazo",
-              data_devolucao: borrowedBook.returnAt
-                ? new Date(borrowedBook.returnAt).toLocaleDateString("pt-BR")
-                : "",
-            }))} // Dados a serem convertidos em CSV
-            filename="Emprestimos" // Nome do arquivo CSV
-            headers={[
-              "ra",
-              "aluno",
-              "code",
-              "livro",
-              "data_emprestimo",
-              "dias_emprestado",
-              "status",
-              "data_devolucao",
-            ]} // Headers do CSV correspondentes aos campos do objeto IUser
-          />
+          {!csvData && (
+            <Button colorScheme="blue" onClick={prepareCsv}>
+              Preparar CSV
+            </Button>
+          )}
+
+          {csvData && (
+            <Button
+              colorScheme="green"
+              as={CsvDownloadButton}
+              data={csvData.map((borrowedBook) => ({
+                ra: borrowedBook.user?.auth?.ra || "",
+                aluno: borrowedBook.user.name,
+                code: borrowedBook.book.code,
+                livro: borrowedBook.book.name,
+                data_emprestimo: borrowedBook.createdAt,
+                dias_emprestado: returnDaysLeft(borrowedBook.createdAt),
+                status:
+                  (delayed(
+                    returnDaysLeft(borrowedBook.createdAt),
+                    borrowedBook.returnAt
+                  ) &&
+                    "Atrasado") ||
+                  "No Prazo",
+                data_devolucao: borrowedBook.returnAt
+                  ? new Date(borrowedBook.returnAt).toLocaleDateString("pt-BR")
+                  : "",
+              }))}
+              filename="Emprestimos"
+              headers={[
+                "ra",
+                "aluno",
+                "code",
+                "livro",
+                "data_emprestimo",
+                "dias_emprestado",
+                "status",
+                "data_devolucao",
+              ]}
+            >
+              Baixar CSV
+            </Button>
+          )}
+
           <Box width={"100%"}>
             <HStack justifyContent={"space-between"}>
               <span>

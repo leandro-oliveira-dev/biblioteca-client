@@ -11,6 +11,8 @@ import Head from "next/head";
 const theme = extendTheme(customTheme);
 
 export default function App({ Component, pageProps }: AppProps) {
+  console.log(process.env.NEXT_PUBLIC_API_URL);
+
   return (
     <ChakraProvider theme={theme}>
       <Head>
