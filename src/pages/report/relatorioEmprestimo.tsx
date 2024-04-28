@@ -164,7 +164,7 @@ export default function RelatorioEmprestar() {
                             onClick={() => returnBorrowedBook(borrowedBook.id)}
                             colorScheme="green"
                           >
-                            Marcar como devolvido
+                            Devolver
                           </Button>
                         )}
                       </HStack>
