@@ -27,9 +27,6 @@ export const theme = {
         },
       },
       button: {},
-      option: {
-        color: "#333",
-      },
     },
   },
 } as Dict;

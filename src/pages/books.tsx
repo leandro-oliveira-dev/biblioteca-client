@@ -4,6 +4,7 @@ import CsvDownloadButton from "react-json-to-csv";
 import { Button as AppButton } from "@/components/ui/Button";
 
 import {
+  Text,
   Button,
   FormControl,
   FormLabel,
@@ -486,7 +487,7 @@ export default function Books() {
         }}
       >
         <ModalOverlay />
-        <ModalContent color="white" bg="#333">
+        <ModalContent>
           <ModalHeader>
             {isEditing ? "Editar Livro" : "Cadastrar um livro"}
           </ModalHeader>
@@ -580,25 +581,16 @@ export default function Books() {
                 <FormControl mt={4}>
                   <FormLabel>Status</FormLabel>
                   <Select
-                    color={"grey"}
                     placeholder="Escolher"
                     defaultValue={status}
                     onChange={(event: {
                       target: { value: SetStateAction<string> };
                     }) => setStatus(event.target.value)}
                   >
-                    <option className="text-black" value="avariado">
-                      AVARIADO
-                    </option>
-                    <option className="text-black" value="disponivel">
-                      DISPONIVEL
-                    </option>
-                    <option className="text-black" value="indisponivel">
-                      INDISPONIVEL
-                    </option>
-                    <option className="text-black" value="emprestado">
-                      EMPRESTADO
-                    </option>
+                    <option value="avariado">AVARIADO</option>
+                    <option value="disponivel">DISPONIVEL</option>
+                    <option value="indisponivel">INDISPONIVEL</option>
+                    <option value="emprestado">EMPRESTADO</option>
                   </Select>
                 </FormControl>
               </>

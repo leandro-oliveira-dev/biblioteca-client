@@ -342,7 +342,7 @@ export default function CadastrarUsuario() {
         }}
       >
         <ModalOverlay />
-        <ModalContent color="white" bg="#333">
+        <ModalContent>
           <ModalHeader>
             {isEditing ? "Editar Usuário" : "Cadastrar um Usuário"}
           </ModalHeader>

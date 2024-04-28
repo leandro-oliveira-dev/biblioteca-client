@@ -10,11 +10,14 @@ import {
   Box,
   Alert,
   AlertIcon,
+  useColorMode,
 } from "@chakra-ui/react";
 import { useAuth } from "@/context/AuthProvider";
 import Head from "next/head";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 
 export default function Login() {
+  const { colorMode, toggleColorMode } = useColorMode();
   const [error, setError] = useState("");
 
   const [email, setEmail] = useState("");
@@ -51,8 +54,33 @@ export default function Login() {
       </Head>
       <Box p={4} flex={1}>
         <VStack>
-          <Heading color={"white"}>Bibli-Etec</Heading>
-          <Stack color="white" spacing={3}>
+          <Box display={"flex"}>
+            {colorMode === "light" ? (
+              <Box
+                py={1}
+                px={2}
+                rounded={8}
+                bg={"grey"}
+                cursor={"pointer"}
+                onClick={toggleColorMode}
+              >
+                <MoonIcon />
+              </Box>
+            ) : (
+              <Box
+                py={1}
+                px={2}
+                rounded={8}
+                bg={"grey"}
+                cursor={"pointer"}
+                onClick={toggleColorMode}
+              >
+                <SunIcon />
+              </Box>
+            )}
+          </Box>
+          <Heading>Bibli-Etec</Heading>
+          <Stack spacing={3}>
             {error.length > 0 && (
               <Alert status="error">
                 <AlertIcon />
