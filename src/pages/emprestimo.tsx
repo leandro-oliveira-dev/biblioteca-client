@@ -24,12 +24,16 @@ import { CheckIcon, ArrowRightIcon } from "@chakra-ui/icons";
 import { useAuth } from "@/context/AuthProvider";
 import { useRouter } from "next/router";
 
+interface IShelf {
+  position: number;
+}
+
 interface IBooks {
   id: string;
   name: string;
   author: string;
   qtd: number;
-  position: string;
+
   status: Status;
   code: number;
   alreadyBorrowed: boolean;
@@ -40,6 +44,7 @@ interface IBooks {
       returnAt?: Date;
     }
   ];
+  Shelf: IShelf[];
 }
 
 const BADGE_STATUS = {
@@ -67,6 +72,7 @@ export default function Books() {
   const [hasPreviousPage, setHasPreviousPage] = useState(false);
   const [hasNextPage, setHasNextPage] = useState(false);
   const { user, api } = useAuth();
+  const [position, setPosition] = useState<Number | undefined>();
 
   useEffect(() => {
     const { status } = router.query;
@@ -234,7 +240,7 @@ export default function Books() {
                   <Th>Autor</Th>
                   <Th>Quantidade</Th>
                   <Th>Emprestados</Th>
-                  <Th>Posição</Th>
+                  <Th>Prateleira</Th>
                   <Th>Status</Th>
                   <Th></Th>
                 </Tr>
@@ -259,7 +265,11 @@ export default function Books() {
                     <Td>{book.author}</Td>
                     <Td>{book.qtd}</Td>
                     <Td>{totalBorrowed(book)}</Td>
-                    <Td>{book.position}</Td>
+                    <Td>
+                      {book.Shelf && book.Shelf.length > 0
+                        ? book.Shelf[0].position
+                        : ""}
+                    </Td>
                     <Td>
                       <Badge colorScheme={BADGE_STATUS[book.status]}>
                         {book.status}
