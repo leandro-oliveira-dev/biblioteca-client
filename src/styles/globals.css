@@ -1,0 +1,24 @@
+.react-datetime-picker__wrapper {
+  color: #000;
+  background-color: #999;
+}
+
+button.react-calendar__tile.react-calendar__month-view__days__day,
+.react-calendar__month-view__weekdays__weekday,
+button.react-calendar__navigation__label,
+.react-calendar__navigation button {
+  color: #fff;
+}
+
+.react-calendar {
+  background-color: #222 !important;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background-color: #8d8d8d !important;
+}
+
+.react-calendar__tile--now {
+  background-color: #71a4b3 !important;
+}
