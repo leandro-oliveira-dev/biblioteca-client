@@ -85,8 +85,12 @@ export default function RelatorioEmprestar() {
       .catch((error) => console.log(error));
   }, [currentPage, pageSize, router, api]);
 
-  const returnDaysLeft = useCallback((borrowedDate: Date) => {
-    return differenceInDays(addDays(new Date(), 7), new Date(borrowedDate));
+  const returnDaysLeft = useCallback((borrowedDate: Date, returnAt?: Date) => {
+    if (returnAt) {
+      return differenceInDays(new Date(returnAt), new Date(borrowedDate));
+    }
+
+    return differenceInDays(new Date(), new Date(borrowedDate));
   }, []);
 
   const delayed = useCallback((returnDaysLeft: number, returnedAt?: Date) => {
@@ -147,7 +151,12 @@ export default function RelatorioEmprestar() {
                         "pt-BR"
                       )}
                     </Td>
-                    <Td>{returnDaysLeft(borrowedBook.createdAt)}</Td>
+                    <Td>
+                      {returnDaysLeft(
+                        borrowedBook.createdAt,
+                        borrowedBook.returnAt
+                      )}
+                    </Td>
                     <Td>
                       {borrowedBook.returnAt && (
                         <Badge mr={1} colorScheme={"green"}>
@@ -156,7 +165,10 @@ export default function RelatorioEmprestar() {
                       )}
 
                       {(delayed(
-                        returnDaysLeft(borrowedBook.createdAt),
+                        returnDaysLeft(
+                          borrowedBook.createdAt,
+                          borrowedBook.returnAt
+                        ),
                         borrowedBook.returnAt
                       ) && <Badge colorScheme={"red"}> Atrasado</Badge>) || (
                         <Badge colorScheme={"blue"}>No prazo</Badge>
