@@ -54,22 +54,24 @@ export default function Login() {
   function handleSendResetPassword() {
     setActionResetPassword(true);
 
-    api
-      .post("/password/reset/send/email", {
-        email,
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          toast({
-            title: "Email de recuperacao de senha enviado",
-            description: "Acesse seu email para recuperar a senha",
-            status: "success",
-            duration: 9000,
-            isClosable: true,
-          });
-        }
-      })
-      .catch((error) => console.log(error));
+    if (email.length > 0) {
+      api
+        .post("/password/reset/send/email", {
+          email,
+        })
+        .then((response) => {
+          if (response.status === 200) {
+            toast({
+              title: "Email de recuperacao de senha enviado",
+              description: "Acesse seu email para recuperar a senha",
+              status: "success",
+              duration: 9000,
+              isClosable: true,
+            });
+          }
+        })
+        .catch((error) => console.log(error));
+    }
   }
 
   return (
