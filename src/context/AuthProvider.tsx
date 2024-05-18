@@ -142,6 +142,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       isAdmin: response.data.auth.user.isAdmin,
     });
 
+    console.log(response.data);
+
     if (response.data.auth.first_access) {
       router.push("/firstAccess");
 
