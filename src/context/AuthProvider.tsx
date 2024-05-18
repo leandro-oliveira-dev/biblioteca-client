@@ -8,6 +8,7 @@ import React, {
 import { useRouter } from "next/router";
 import { appStorage } from "@/lib/storage";
 import axios, { AxiosInstance } from "axios";
+import { publicPages } from "@/config/publicPages";
 
 export type IUser = {
   token?: string;
@@ -64,7 +65,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const router = useRouter();
 
-  const isLoginPage = router.pathname === "/login";
+  const isPublicPage = publicPages.includes(router.pathname);
 
   const api = axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
@@ -88,17 +89,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   setupAuthHeader();
 
   useEffect(() => {
-    if (!(user?.token || appStorage.getItem("token")) && !isLoginPage) {
+    if (!(user?.token || appStorage.getItem("token")) && !isPublicPage) {
       router.push("/login");
 
       return;
     }
-  }, [isLoginPage, router, user]);
+  }, [isPublicPage, router, user]);
 
   useEffect(() => {
     const token = appStorage.getItem("token");
 
-    if (isLoginPage) return;
+    if (isPublicPage) return;
 
     if (!token) return;
 
@@ -116,7 +117,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         });
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoginPage]);
+  }, [isPublicPage]);
 
   const login = async (userData: IAuthParams) => {
     const response = await api.post<IResponseAuth>("/auth", userData);

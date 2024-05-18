@@ -11,6 +11,8 @@ import {
   Alert,
   AlertIcon,
   useColorMode,
+  Link,
+  useToast,
 } from "@chakra-ui/react";
 import { useAuth } from "@/context/AuthProvider";
 import Head from "next/head";
@@ -18,11 +20,13 @@ import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 
 export default function Login() {
   const { colorMode, toggleColorMode } = useColorMode();
+  const toast = useToast();
   const [error, setError] = useState("");
 
   const [email, setEmail] = useState("");
   const [ra, setRa] = useState("");
   const [password, setPassword] = useState("");
+  const [actionResetPassword, setActionResetPassword] = useState(false);
 
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
@@ -32,7 +36,7 @@ export default function Login() {
     }
   }, []);
 
-  const { login } = useAuth();
+  const { login, api } = useAuth();
 
   const handleLogin = async () => {
     try {
@@ -46,6 +50,27 @@ export default function Login() {
       console.log("Error during login:", error);
     }
   };
+
+  function handleSendResetPassword() {
+    setActionResetPassword(true);
+
+    api
+      .post("/password/reset/send/email", {
+        email,
+      })
+      .then((response) => {
+        if (response.status === 200) {
+          toast({
+            title: "Email de recuperacao de senha enviado",
+            description: "Acesse seu email para recuperar a senha",
+            status: "success",
+            duration: 9000,
+            isClosable: true,
+          });
+        }
+      })
+      .catch((error) => console.log(error));
+  }
 
   return (
     <Box display="flex" flexDirection="row">
@@ -97,11 +122,18 @@ export default function Login() {
 
             <Text>Email</Text>
             <Input
+              onFocus={() => setActionResetPassword(false)}
               variant="outline"
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+
+            {!email && actionResetPassword && (
+              <Alert status="error">
+                Preencha o email para resetar a senha
+              </Alert>
+            )}
 
             <Text>Senha</Text>
             <Input
@@ -114,6 +146,10 @@ export default function Login() {
             <Button colorScheme="blue" onClick={handleLogin}>
               Login
             </Button>
+
+            <Link onClick={handleSendResetPassword} textAlign={"center"}>
+              Esqueci minha senha
+            </Link>
           </Stack>
         </VStack>
       </Box>
