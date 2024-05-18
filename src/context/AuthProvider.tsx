@@ -35,6 +35,7 @@ type IResponseAuth = {
     };
     email: string;
     ra: string;
+    first_access: boolean;
   };
 };
 
@@ -140,6 +141,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       name: response.data.auth.user.name,
       isAdmin: response.data.auth.user.isAdmin,
     });
+
+    if (response.data.auth.first_access) {
+      router.push("/firstAccess");
+
+      return;
+    }
 
     router.push("/inicio");
   };

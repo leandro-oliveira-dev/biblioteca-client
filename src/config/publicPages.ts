@@ -1,1 +1,1 @@
-export const publicPages = ["/login", "/resetPassword"];
+export const publicPages = ["/login", "/resetPassword", "/firstAccess"];
