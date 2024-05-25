@@ -49,8 +49,8 @@ export default function RelatorioEmprestar() {
       .get(`/users/usuario-report/?page=${currentPage}&pageSize=${pageSize}`)
       .then((response) => response.data)
       .then((value) => {
-        setUsers(value);
-        setTotalItens(value.totalBooks);
+        setUsers(value.users);
+        setTotalItens(value.totalUsers);
         setTotalPages(value.totalPages);
         setHasPreviousPage(value.hasPreviousPage);
         setHasNextPage(value.hasNextPage);
@@ -152,7 +152,7 @@ export default function RelatorioEmprestar() {
               <span>
                 {currentPage} de {totalPages}
               </span>
-              <span> {totalItens} Total de Livros</span>
+              <span> {totalItens} Total de usuarios</span>
             </HStack>
             <HStack>
               {hasPreviousPage && (
