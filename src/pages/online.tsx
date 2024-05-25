@@ -20,7 +20,7 @@ export default function Online() {
   ];
 
   return (
-    <Box as={"main"} color="white" p={4} borderRadius="md">
+    <Box as={"main"} p={4} borderRadius="md">
       <Header title="Livros Online"></Header>
       <br></br>
       <div>Verifique livros online disponíveis:</div>
@@ -28,8 +28,8 @@ export default function Online() {
       <Table colorScheme="teal" mt={4} bg="gray.700">
         <Thead>
           <Tr>
-            <Th color="white">Site</Th>
-            <Th color="white">Link</Th>
+            <Th>Site</Th>
+            <Th>Link</Th>
           </Tr>
         </Thead>
         <Tbody>
