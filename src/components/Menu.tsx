@@ -13,76 +13,47 @@ import {
 } from "@chakra-ui/react";
 import { Profile } from "./Profile";
 import { useAuth } from "@/context/AuthProvider";
+import { PROTECTED_MENUS } from "@/config/protectedPages";
 
-interface IMenu {
+export interface IMenu {
   url?: string;
   title: string;
   subMenu?: IMenu[];
 }
-
-const MENUS: IMenu[] = [
-  { url: "/inicio", title: "Inicio" },
-  {
-    title: "Usuários",
-    subMenu: [
-      {
-        url: "/cadastroDeUsuario",
-        title: "Cadastro de Usuários",
-      },
-    ],
-  },
-
-  {
-    title: "Livros",
-    subMenu: [
-      {
-        url: "/books",
-        title: "Lista de livros",
-      },
-      {
-        url: "/emprestimo",
-        title: "Emprestimo de Livros",
-      },
-
-      {
-        url: "/doarLivro",
-        title: "Doação de livros para biblioteca",
-      },
-    ],
-  },
-  {
-    title: "Relatórios",
-    subMenu: [
-      {
-        url: "/report/relatorioEmprestimo",
-        title: "Relatório de Emprestimo",
-      },
-      {
-        url: "/report/relatorioUsuario",
-        title: "Relatório usuário",
-      },
-
-      {
-        url: "/report/relatorioLivro",
-        title: "Relatório de livros",
-      },
-    ],
-  },
-
-  {
-    url: "/online",
-    title: "Online",
-  },
-
-  {
-    url: "/manual",
-    title: "Manual",
-  },
-];
-
 export function Menu() {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const { colorMode, toggleColorMode } = useColorMode();
+
+  const MENUS: IMenu[] = [
+    { url: "/inicio", title: "Inicio" },
+    ...((user?.isAdmin && PROTECTED_MENUS) || []),
+    {
+      title: "Livros",
+      subMenu: [
+        {
+          url: "/books",
+          title: "Lista de livros",
+        },
+        {
+          url: "/emprestimo",
+          title: "Emprestimo de Livros",
+        },
+        {
+          url: "/doarLivro",
+          title: "Doação de livros para biblioteca",
+        },
+      ],
+    },
+    {
+      url: "/online",
+      title: "Online",
+    },
+
+    {
+      url: "/manual",
+      title: "Manual",
+    },
+  ];
 
   return (
     <VStack

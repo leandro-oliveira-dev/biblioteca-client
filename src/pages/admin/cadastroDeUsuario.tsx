@@ -1,7 +1,7 @@
 import { SetStateAction, useEffect, useRef, useState } from "react";
 import { Header } from "@/components/Header";
 
-import { Box, useColorMode } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { Button as AppButton } from "@/components/ui/Button";
 
 import {

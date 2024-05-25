@@ -7,8 +7,11 @@ import React, {
 } from "react";
 import { useRouter } from "next/router";
 import { appStorage } from "@/lib/storage";
-import axios, { AxiosInstance } from "axios";
+import { AxiosInstance } from "axios";
 import { publicPages } from "@/config/publicPages";
+import Cookies from "js-cookie";
+import { api } from "@/lib/api";
+import { getUserByToken } from "@/auth";
 
 export type IUser = {
   token?: string;
@@ -39,17 +42,6 @@ type IResponseAuth = {
   };
 };
 
-type IResponseUser = {
-  id: string;
-  name: string;
-  isAdmin: boolean;
-  token?: string;
-  auth: {
-    email: string;
-    ra: string;
-  };
-};
-
 interface IAuthContext {
   user: IUser | null;
   login: (userData: IAuthParams) => Promise<void>;
@@ -68,10 +60,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const isPublicPage = publicPages.includes(router.pathname);
 
-  const api = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000",
-  });
-
   const setupAuthHeader = useCallback(() => {
     api.interceptors.request.use(
       (config) => {
@@ -85,7 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         return Promise.reject(error);
       }
     );
-  }, [api.interceptors.request, user]);
+  }, [user]);
 
   setupAuthHeader();
 
@@ -104,19 +92,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     if (!token) return;
 
-    api
-      .get<IResponseUser>("/users")
-      .then((response) => response.data)
-      .then((userResponse) => {
-        setUser({
-          token,
-          id: userResponse.id,
-          email: userResponse.auth.email,
-          ra: userResponse.auth.ra,
-          name: userResponse.name,
-          isAdmin: userResponse.isAdmin,
-        });
+    getUserByToken(token).then((userResponse) => {
+      setUser({
+        token,
+        id: userResponse.id,
+        email: userResponse.auth.email,
+        ra: userResponse.auth.ra,
+        name: userResponse.name,
+        isAdmin: userResponse.isAdmin,
       });
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPublicPage]);
 
@@ -132,6 +117,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     appStorage.setItem("token", token);
+
+    const typeUser = response.data.auth.user.isAdmin ? "admin" : "user";
+
+    Cookies.set("sessionbiblioteca", typeUser, {
+      secure: process.env.NODE_ENV === "production",
+      expires: 60 * 60 * 24 * 7, // One week
+      path: "/",
+    });
 
     setUser({
       token,

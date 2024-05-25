@@ -69,7 +69,7 @@ const BADGE_STATUS = {
 
 export default function Books() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const { api } = useAuth();
+  const { api, user } = useAuth();
 
   const router = useRouter();
 
@@ -375,11 +375,14 @@ export default function Books() {
                   <Th>Gênero</Th>
                   <Th>Status</Th>
                   <Th>
-                    <Flex width={"100%"} justifyContent={"flex-end"}>
-                      <Button size={"sm"} onClick={onOpen} colorScheme="blue">
-                        Cadastrar
-                      </Button>
-                    </Flex>
+                    {(user?.isAdmin && (
+                      <Flex width={"100%"} justifyContent={"flex-end"}>
+                        <Button size={"sm"} onClick={onOpen} colorScheme="blue">
+                          Cadastrar
+                        </Button>
+                      </Flex>
+                    )) ||
+                      null}
                   </Th>
                 </Tr>
               </Thead>
@@ -406,18 +409,21 @@ export default function Books() {
                       </Badge>
                     </Td>
                     <Td>
-                      <HStack>
-                        <Button
-                          onClick={() => startEditing(book)}
-                          colorScheme="green"
-                          size={"sm"}
-                        >
-                          <EditIcon />
-                        </Button>
-                        <AppButton size={"sm"} colorScheme={"red"}>
-                          <DeleteIcon />
-                        </AppButton>
-                      </HStack>
+                      {(user?.isAdmin && (
+                        <HStack>
+                          <Button
+                            onClick={() => startEditing(book)}
+                            colorScheme="green"
+                            size={"sm"}
+                          >
+                            <EditIcon />
+                          </Button>
+                          <AppButton size={"sm"} colorScheme={"red"}>
+                            <DeleteIcon />
+                          </AppButton>
+                        </HStack>
+                      )) ||
+                        null}
                     </Td>
                   </Tr>
                 ))}
@@ -450,30 +456,33 @@ export default function Books() {
                 </Button>
               )}
             </HStack>
-            <Box display="grid" placeItems="center">
-              <CsvDownloadButton
-                // Componente para download CSV
-                data={books.map((book) => ({
-                  code: book.code,
-                  name: book.name,
-                  author: book.author,
-                  qtd: book.qtd,
-                  position: book.Shelf[0]?.position,
-                  gender: book.Shelf[0]?.gender,
-                  status: book.status,
-                }))} // Dados a serem convertidos em CSV
-                filename="Livros" // Nome do arquivo CSV
-                headers={[
-                  "Código",
-                  "Nome",
-                  "Autor",
-                  "Quantidade",
-                  "Posição",
-                  "Gênero",
-                  "Status",
-                ]} // Headers do CSV correspondentes aos campos do objeto IUser
-              />
-            </Box>
+            {(user?.isAdmin && (
+              <Box display="grid" placeItems="center">
+                <CsvDownloadButton
+                  // Componente para download CSV
+                  data={books.map((book) => ({
+                    code: book.code,
+                    name: book.name,
+                    author: book.author,
+                    qtd: book.qtd,
+                    position: book.Shelf[0]?.position,
+                    gender: book.Shelf[0]?.gender,
+                    status: book.status,
+                  }))} // Dados a serem convertidos em CSV
+                  filename="Livros" // Nome do arquivo CSV
+                  headers={[
+                    "Código",
+                    "Nome",
+                    "Autor",
+                    "Quantidade",
+                    "Posição",
+                    "Gênero",
+                    "Status",
+                  ]} // Headers do CSV correspondentes aos campos do objeto IUser
+                />
+              </Box>
+            )) ||
+              null}
           </Box>
         </VStack>
       </VStack>

@@ -146,6 +146,8 @@ export default function Books() {
           duration: 5000,
           isClosable: true,
         });
+
+        window.location.reload();
       })
       .catch((error) => {
         toast({
@@ -232,7 +234,7 @@ export default function Books() {
           </HStack>
 
           <TableContainer>
-            <Table borderRadius={4} variant="simple">
+            <Table size={"sm"} borderRadius={4} variant="simple">
               <Thead>
                 <Tr>
                   <Th>Codigo</Th>
@@ -281,6 +283,7 @@ export default function Books() {
                           <Text>Livro emprestado</Text>
                         ) : (
                           <Button
+                            size={"sm"}
                             onClick={() =>
                               handleBorrowBook(book.id, String(user?.id))
                             }
