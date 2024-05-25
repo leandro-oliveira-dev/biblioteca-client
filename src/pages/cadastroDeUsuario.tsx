@@ -117,18 +117,16 @@ export default function CadastrarUsuario() {
     apiRequest(url, data)
       .then((response) => response.data)
       .then((data) => {
-        onClose();
-        setIsEditing(false);
-        clearInputs();
         if (isEditing) {
           // Atualizar a lista de usuario com o usuario editado
-
           setUsers((currentUsers) => {
             const editedUsers = currentUsers.map((user) => {
               if (user.id !== data.user.id) return user;
 
               return data.user;
             });
+
+            setIsEditing(false);
 
             return [...editedUsers];
           });
@@ -147,7 +145,10 @@ export default function CadastrarUsuario() {
           isClosable: true,
         });
       })
-
+      .finally(() => {
+        onClose();
+        clearInputs();
+      })
       .catch((error) => {
         console.log({ error });
 
@@ -397,7 +398,7 @@ export default function CadastrarUsuario() {
           </ModalBody>
 
           <ModalFooter>
-            <Button onClick={handleSaveUsers} colorScheme="black" mr={3}>
+            <Button onClick={handleSaveUsers} colorScheme="blue" mr={3}>
               Salvar
             </Button>
             <Button onClick={onClose}>Cancelar</Button>
