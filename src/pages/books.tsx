@@ -148,6 +148,22 @@ export default function Books() {
     });
   }
 
+  function handleDeleteBook(bookId: string) {
+    api.delete(`/books/delete/${bookId}`).then((response) => {
+      if (response.status === 200) {
+        toast({
+          title: "Livro inativado com sucesso",
+          description: "",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+
+        window.location.reload();
+      }
+    });
+  }
+
   function handleSaveBook() {
     const data = {
       id,
@@ -418,7 +434,11 @@ export default function Books() {
                           >
                             <EditIcon />
                           </Button>
-                          <AppButton size={"sm"} colorScheme={"red"}>
+                          <AppButton
+                            onClick={() => handleDeleteBook(book.id)}
+                            size={"sm"}
+                            colorScheme={"red"}
+                          >
                             <DeleteIcon />
                           </AppButton>
                         </HStack>
