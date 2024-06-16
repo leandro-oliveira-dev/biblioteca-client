@@ -22,3 +22,11 @@ button.react-calendar__navigation__label,
 .react-calendar__tile--now {
   background-color: #71a4b3 !important;
 }
+
+tr,
+td {
+  max-width: 360px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -31,7 +31,7 @@ import {
   HStack,
   Flex,
   Badge,
-  Center,
+  Tooltip,
 } from "@chakra-ui/react";
 import { Header } from "@/components/Header";
 import { DEFAULT_MESSAGES } from "@/errors/DEFAULT_MESSAGES";
@@ -390,8 +390,16 @@ export default function Books() {
                 {filteredBooks?.map((book) => (
                   <Tr key={book.id}>
                     <Td>{book.code}</Td>
-                    <Td>{book.name}</Td>
-                    <Td>{book.author}</Td>
+                    <Td>
+                      <Tooltip label={book.name}>
+                        <span>{book.name}</span>
+                      </Tooltip>
+                    </Td>
+                    <Td>
+                      <Tooltip label={book.author}>
+                        <span>{book.author}</span>
+                      </Tooltip>
+                    </Td>
                     <Td>{book.qtd}</Td>
                     <Td>
                       {book.Shelf && book.Shelf.length > 0
