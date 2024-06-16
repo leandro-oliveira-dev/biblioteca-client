@@ -18,6 +18,7 @@ import {
   HStack,
   Badge,
   Link,
+  Tooltip,
 } from "@chakra-ui/react";
 import { Header } from "@/components/Header";
 import { CheckIcon, ArrowRightIcon } from "@chakra-ui/icons";
@@ -252,19 +253,23 @@ export default function Books() {
                   <Tr key={book.id}>
                     <Td>{book.code}</Td>
                     <Td>
-                      {(Boolean(book?.BorrowedBook.length) && (
-                        <Link
-                          style={{
-                            textDecoration: "underline",
-                          }}
-                          href={`/report/relatorioEmprestimo?book=${book.id}`}
-                        >
-                          {book.name}
-                        </Link>
-                      )) ||
-                        book.name}
+                      <Tooltip label={book.name}>
+                        {(Boolean(book?.BorrowedBook.length) && (
+                          <Link
+                            style={{
+                              textDecoration: "underline",
+                            }}
+                            href={`/report/relatorioEmprestimo?book=${book.id}`}
+                          >
+                            {book.name}
+                          </Link>
+                        )) ||
+                          book.name}
+                      </Tooltip>
                     </Td>
-                    <Td>{book.author}</Td>
+                    <Td>
+                      <Tooltip label={book.author}>{book.author}</Tooltip>
+                    </Td>
                     <Td>{book.qtd}</Td>
                     <Td>{totalBorrowed(book)}</Td>
                     <Td>
