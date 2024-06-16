@@ -391,14 +391,10 @@ export default function Books() {
                   <Tr key={book.id}>
                     <Td>{book.code}</Td>
                     <Td>
-                      <Tooltip label={book.name}>
-                        <span>{book.name}</span>
-                      </Tooltip>
+                      <Tooltip label={book.name}>{book.name}</Tooltip>
                     </Td>
                     <Td>
-                      <Tooltip label={book.author}>
-                        <span>{book.author}</span>
-                      </Tooltip>
+                      <Tooltip label={book.author}>{book.author}</Tooltip>
                     </Td>
                     <Td>{book.qtd}</Td>
                     <Td>

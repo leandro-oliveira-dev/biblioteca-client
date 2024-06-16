@@ -24,9 +24,13 @@ button.react-calendar__navigation__label,
 }
 
 tr,
-td {
+td > span {
   max-width: 360px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+td > span {
+  max-width: 320px;
 }
